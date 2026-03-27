@@ -1,0 +1,50 @@
+# SpinWheel Pro V2 — Root .htaccess
+Options -Indexes
+Options -MultiViews
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# PHP upload settings
+<IfModule mod_php8.c>
+    php_flag display_errors Off
+    php_value upload_max_filesize 12M
+    php_value post_max_size 14M
+    php_value max_execution_time 60
+    php_value session.cookie_httponly 1
+    php_value session.use_strict_mode 1
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag display_errors Off
+    php_value upload_max_filesize 12M
+    php_value post_max_size 14M
+    php_value session.cookie_httponly 1
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Route /spin/TOKEN → spin/index.php?token=TOKEN
+    # FIX: pass captured token as query string parameter
+    RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^spin/([a-zA-Z0-9_-]+)/?$ spin/index.php?token=$1 [L,QSA]
+
+    # Block access to sensitive directories
+    RewriteRule ^includes/ - [F,L]
+    RewriteRule ^\.git/ - [F,L]
+    RewriteRule \.sql$ - [F,L]
+    RewriteRule \.log$ - [F,L]
+</IfModule>
+
+# Block hidden files
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>

@@ -1,0 +1,2327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpinWheel Pro — API Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN SYSTEM — Terminal-meets-editorial aesthetic
+   Dark navy base, electric indigo + acid lime accents
+   Fraunces (editorial serif) + JetBrains Mono (code)
+═══════════════════════════════════════════════════ */
+:root {
+  --bg:       #080c10;
+  --bg2:      #0d1117;
+  --bg3:      #111820;
+  --bg4:      #161e28;
+  --panel:    #0d1117;
+  --border:   rgba(255,255,255,.07);
+  --border2:  rgba(255,255,255,.12);
+  --a:        #6d72f6;
+  --a2:       #8b8ff8;
+  --lime:     #a3e635;
+  --lime2:    #bef264;
+  --gold:     #f59e0b;
+  --rose:     #f43f5e;
+  --cyan:     #22d3ee;
+  --green:    #10b981;
+  --t:        #e2e8f0;
+  --t2:       #94a3b8;
+  --t3:       #64748b;
+  --t4:       #475569;
+  --sidebar-w: 280px;
+  --header-h:  58px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--t);
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--t4); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--t3); }
+
+/* ── HEADER ───────────────────────────────────────── */
+.header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: var(--header-h);
+  background: rgba(8,12,16,.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+}
+.header-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Fraunces', serif;
+  font-size: 17px; font-weight: 600; color: #fff;
+  letter-spacing: -.3px;
+}
+.header-logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--a), var(--lime));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.header-badge {
+  background: rgba(163,230,53,.12);
+  border: 1px solid rgba(163,230,53,.3);
+  color: var(--lime);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; padding: 2px 8px; border-radius: 20px;
+}
+.header-right { display: flex; align-items: center; gap: 12px; }
+.btn-postman {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 16px;
+  background: #FF6C37;
+  color: #fff; font-weight: 600; font-size: 12px;
+  border: none; border-radius: 7px; cursor: pointer;
+  text-decoration: none; transition: all .2s;
+  font-family: 'Outfit', sans-serif;
+}
+.btn-postman:hover { background: #ff8152; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,108,55,.35); }
+.btn-postman svg { width: 16px; height: 16px; }
+.header-search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 12px;
+  font-size: 12px; color: var(--t3);
+  cursor: pointer; transition: border-color .2s; min-width: 180px;
+}
+.header-search:hover { border-color: var(--border2); }
+.kbd {
+  background: var(--bg4); border: 1px solid var(--border2);
+  border-radius: 4px; padding: 1px 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--t3); margin-left: auto;
+}
+
+/* ── SIDEBAR ──────────────────────────────────────── */
+.sidebar {
+  position: fixed; top: var(--header-h); left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto; padding: 24px 0;
+  z-index: 50;
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+
+.sb-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: #64748b; padding: 14px 20px 6px;
+  margin-top: 8px;
+}
+.sb-section-label:first-child { margin-top: 0; }
+
+.sb-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 20px; color: var(--t2); font-size: 13px;
+  text-decoration: none; cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all .15s; position: relative;
+  font-weight: 400;
+}
+.sb-link:hover { color: var(--t); background: rgba(255,255,255,.03); }
+.sb-link.active {
+  color: var(--a2); border-left-color: var(--a);
+  background: rgba(109,114,246,.08);
+  font-weight: 500;
+}
+.sb-method {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600; padding: 2px 5px;
+  border-radius: 3px; flex-shrink: 0; letter-spacing: .5px;
+}
+.m-get  { background: rgba(16,185,129,.15); color: #34d399; }
+.m-post { background: rgba(109,114,246,.15); color: var(--a2); }
+.m-del  { background: rgba(244,63,94,.15);   color: #fb7185; }
+.m-put  { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.m-ws   { background: rgba(34,211,238,.15);  color: var(--cyan); }
+
+/* ── MAIN CONTENT ─────────────────────────────────── */
+.main {
+  margin-left: var(--sidebar-w);
+  padding-top: var(--header-h);
+  min-height: 100vh;
+}
+
+/* ── HERO ─────────────────────────────────────────── */
+.hero {
+  padding: 64px 64px 56px;
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -100px; right: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(109,114,246,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero::after {
+  content: '';
+  position: absolute; bottom: -80px; left: 40%;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(163,230,53,.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--lime); letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-eyebrow::before {
+  content: ''; width: 24px; height: 1px; background: var(--lime);
+}
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(38px, 5vw, 58px);
+  font-weight: 700; line-height: 1.05;
+  letter-spacing: -1.5px; color: #fff;
+  margin-bottom: 20px;
+}
+.hero h1 em { font-style: italic; color: var(--a2); }
+.hero-desc {
+  font-size: 16px; color: var(--t2); max-width: 560px;
+  line-height: 1.7; margin-bottom: 32px;
+}
+.hero-meta {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.hero-stat {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--t2);
+}
+.hero-stat-dot { width: 6px; height: 6px; border-radius: 50%; }
+.base-url-block {
+  display: flex; align-items: center; gap: 0;
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 10px; overflow: hidden; margin-top: 32px;
+  max-width: 620px; font-family: 'JetBrains Mono', monospace;
+}
+.base-url-label {
+  padding: 12px 16px; background: rgba(109,114,246,.1);
+  border-right: 1px solid var(--border2);
+  font-size: 11px; font-weight: 600; color: var(--a2);
+  letter-spacing: 1px; text-transform: uppercase; white-space: nowrap;
+}
+.base-url-val {
+  padding: 12px 16px; font-size: 13px; color: var(--lime); flex: 1;
+}
+.btn-copy-base {
+  padding: 12px 16px; background: none; border: none;
+  border-left: 1px solid var(--border2);
+  color: var(--t3); cursor: pointer; transition: all .2s; font-size: 12px;
+}
+.btn-copy-base:hover { color: var(--t); background: rgba(255,255,255,.04); }
+
+/* ── SECTION ──────────────────────────────────────── */
+.section {
+  padding: 56px 64px;
+  border-bottom: 1px solid var(--border);
+}
+.section:last-child { border-bottom: none; }
+
+.section-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--lime); margin-bottom: 10px;
+}
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 28px; font-weight: 600; color: #fff;
+  letter-spacing: -.5px; margin-bottom: 12px;
+}
+.section-desc { font-size: 14px; color: var(--t2); line-height: 1.75; max-width: 640px; margin-bottom: 32px; }
+
+/* ── ENDPOINT CARD ────────────────────────────────── */
+.endpoint-card {
+  border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+  margin-bottom: 24px;
+  background: var(--bg2);
+  transition: border-color .2s;
+}
+.endpoint-card:hover { border-color: var(--border2); }
+
+.endpoint-header {
+  padding: 18px 24px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; user-select: none;
+  border-bottom: 1px solid transparent;
+  transition: all .2s;
+}
+.endpoint-header:hover { background: rgba(255,255,255,.02); }
+.endpoint-header.open { border-bottom-color: var(--border); }
+
+.ep-method {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 600; padding: 4px 10px;
+  border-radius: 6px; letter-spacing: .5px; flex-shrink: 0;
+}
+.ep-path {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; color: var(--t); flex: 1;
+}
+.ep-path em { color: var(--a2); font-style: normal; }
+.ep-desc { font-size: 13px; color: var(--t3); margin-left: auto; text-align: right; max-width: 240px; }
+.ep-chevron {
+  color: var(--t3); transition: transform .25s; flex-shrink: 0;
+  font-size: 16px;
+}
+.ep-chevron.open { transform: rotate(180deg); }
+
+.endpoint-body {
+  display: none; padding: 24px;
+  animation: fadeSlide .2s ease;
+}
+.endpoint-body.open { display: block; }
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 900px) { .ep-grid { grid-template-columns: 1fr; } }
+
+/* ── TABS ─────────────────────────────────────────── */
+.tabs { display: flex; gap: 2px; margin-bottom: 16px; }
+.tab {
+  padding: 6px 14px; border-radius: 6px;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  color: var(--t3); transition: all .15s; border: none; background: none;
+  font-family: 'Outfit', sans-serif;
+}
+.tab.active { background: rgba(109,114,246,.15); color: var(--a2); }
+.tab:hover:not(.active) { color: var(--t2); background: rgba(255,255,255,.04); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── CODE BLOCK ───────────────────────────────────── */
+.code-wrap {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; position: relative;
+}
+.code-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+}
+.code-lang {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--t3); letter-spacing: 1px; text-transform: uppercase;
+}
+.code-lang span { color: var(--lime); margin-right: 8px; }
+.btn-copy {
+  background: none; border: 1px solid var(--border);
+  color: var(--t3); font-size: 11px; padding: 4px 10px;
+  border-radius: 5px; cursor: pointer; transition: all .15s;
+  font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 5px;
+}
+.btn-copy:hover { border-color: var(--border2); color: var(--t); }
+.btn-copy.copied { border-color: rgba(16,185,129,.4); color: #34d399; }
+pre {
+  padding: 18px 20px; overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px; line-height: 1.75; color: var(--t2);
+  margin: 0;
+}
+.c-key    { color: #7dd3fc; }
+.c-str    { color: #86efac; }
+.c-num    { color: #fbbf24; }
+.c-bool   { color: #fb923c; }
+.c-null   { color: #94a3b8; }
+.c-method { color: var(--a2); font-weight: 600; }
+.c-url    { color: var(--lime); }
+.c-hdr    { color: #f0abfc; }
+.c-cmt    { color: #6b7e9a; font-style: italic; }
+.c-bracket { color: #e2e8f0; }
+
+/* ── PARAMS TABLE ─────────────────────────────────── */
+.params-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+}
+.params-table th {
+  text-align: left; padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--t3);
+  border-bottom: 1px solid var(--border); white-space: nowrap;
+}
+.params-table td {
+  padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,.04);
+  vertical-align: top; line-height: 1.5;
+}
+.params-table tr:last-child td { border-bottom: none; }
+.params-table tr:hover td { background: rgba(255,255,255,.015); }
+.param-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--a2); font-weight: 500;
+}
+.param-type {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--gold); 
+}
+.param-req {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  padding: 1px 6px; border-radius: 3px; letter-spacing: .5px;
+  text-transform: uppercase;
+}
+.req  { background: rgba(244,63,94,.12); color: #fb7185; border: 1px solid rgba(244,63,94,.2); }
+.opt  { background: rgba(71,85,105,.2);  color: var(--t3); border: 1px solid var(--border); }
+.param-desc { color: var(--t2); font-size: 13px; }
+
+/* ── RESPONSE BADGE ───────────────────────────────── */
+.resp-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.resp-badge {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  cursor: pointer; transition: all .15s; border: 1px solid transparent;
+  font-weight: 600;
+}
+.resp-badge.r200 { background: rgba(16,185,129,.1); color: #34d399; border-color: rgba(16,185,129,.2); }
+.resp-badge.r400 { background: rgba(245,158,11,.1); color: #fbbf24; border-color: rgba(245,158,11,.2); }
+.resp-badge.r401 { background: rgba(244,63,94,.1);  color: #fb7185; border-color: rgba(244,63,94,.2); }
+.resp-badge.r403 { background: rgba(244,63,94,.1);  color: #fb7185; border-color: rgba(244,63,94,.2); }
+.resp-badge.r404 { background: rgba(244,63,94,.1);  color: #fb7185; border-color: rgba(244,63,94,.2); }
+.resp-badge.r500 { background: rgba(244,63,94,.1);  color: #fb7185; border-color: rgba(244,63,94,.2); }
+.resp-badge.active { box-shadow: 0 0 0 2px currentColor; }
+
+/* ── CALLOUT ──────────────────────────────────────── */
+.callout {
+  display: flex; gap: 12px; padding: 14px 16px;
+  border-radius: 9px; margin-bottom: 20px; font-size: 13px; line-height: 1.6;
+}
+.callout-info  { background: rgba(109,114,246,.08); border: 1px solid rgba(109,114,246,.2); color: var(--a2); }
+.callout-warn  { background: rgba(245,158,11,.08);  border: 1px solid rgba(245,158,11,.2);  color: #fbbf24; }
+.callout-tip   { background: rgba(16,185,129,.08);  border: 1px solid rgba(16,185,129,.2);  color: #34d399; }
+.callout-icon  { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.callout-body strong { color: #fff; display: block; margin-bottom: 3px; font-size: 13px; }
+
+/* ── AUTH CARD ────────────────────────────────────── */
+.auth-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 24px; margin-bottom: 16px;
+}
+.auth-card-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px; color: #fff; margin-bottom: 8px; font-weight: 600;
+}
+.auth-card-desc { font-size: 13px; color: var(--t2); margin-bottom: 14px; line-height: 1.6; }
+
+/* ── WEBHOOK ──────────────────────────────────────── */
+.webhook-events {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;
+}
+@media (max-width: 800px) { .webhook-events { grid-template-columns: 1fr; } }
+.webhook-event {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px;
+  transition: border-color .2s;
+}
+.webhook-event:hover { border-color: var(--border2); }
+.we-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--lime); margin-bottom: 4px; font-weight: 500;
+}
+.we-desc { font-size: 12px; color: #8899aa; line-height: 1.5; }
+
+/* ── ERROR TABLE ──────────────────────────────────── */
+.error-grid {
+  display: grid; gap: 8px;
+}
+.error-row {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 9px; padding: 12px 16px;
+}
+.error-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; font-weight: 600; flex-shrink: 0; width: 40px;
+}
+.error-name { font-size: 13px; font-weight: 500; color: var(--t); margin-bottom: 2px; }
+.error-desc { font-size: 12px; color: #8899aa; }
+
+/* ── SDK CARDS ────────────────────────────────────── */
+.sdk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 14px; }
+.sdk-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px 20px;
+  transition: all .2s; cursor: pointer; text-decoration: none;
+}
+.sdk-card:hover { border-color: var(--a); background: rgba(109,114,246,.06); transform: translateY(-2px); }
+.sdk-icon { font-size: 28px; margin-bottom: 10px; }
+.sdk-name { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.sdk-desc { font-size: 12px; color: #8899aa; }
+
+/* ── RATE LIMIT ───────────────────────────────────── */
+.rate-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 24px; }
+@media (max-width: 700px) { .rate-grid { grid-template-columns: 1fr; } }
+.rate-card {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 18px; text-align: center;
+}
+.rate-num {
+  font-family: 'Fraunces', serif;
+  font-size: 32px; font-weight: 700; color: var(--a2); line-height: 1;
+  margin-bottom: 4px;
+}
+.rate-unit { font-size: 12px; color: #8899aa; margin-bottom: 2px; }
+.rate-label { font-size: 11px; color: #8899aa; }
+
+/* ── TRY IT PANEL ─────────────────────────────────── */
+.try-it {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; margin-top: 20px;
+}
+.try-it-header {
+  padding: 12px 16px; background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; font-weight: 600; color: var(--t2);
+}
+.try-it-body { padding: 16px; }
+.try-field { margin-bottom: 12px; }
+.try-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--t3); margin-bottom: 5px; font-family: 'JetBrains Mono', monospace; }
+.try-input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 7px; padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--t);
+  outline: none; transition: border-color .2s; color-scheme: dark;
+}
+.try-input:focus { border-color: var(--a); }
+.btn-run {
+  width: 100%; padding: 10px; background: var(--a);
+  color: #fff; font-weight: 600; font-size: 13px;
+  border: none; border-radius: 8px; cursor: pointer;
+  transition: all .2s; font-family: 'Outfit', sans-serif;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+}
+.btn-run:hover { background: var(--a2); transform: translateY(-1px); }
+.try-response {
+  margin-top: 12px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: 7px;
+  padding: 12px 14px; font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--t2); min-height: 60px;
+  white-space: pre-wrap; display: none; line-height: 1.6;
+}
+.try-response.show { display: block; }
+
+/* ── BREADCRUMB ───────────────────────────────────── */
+.breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--t3); margin-bottom: 20px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.breadcrumb span { color: var(--t3); }
+
+/* ── INLINE CODE ──────────────────────────────────── */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--a2);
+  background: rgba(109,114,246,.1);
+  border: 1px solid rgba(109,114,246,.18);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+/* Don't double-style code inside pre blocks */
+pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+.divider {
+  height: 1px; background: var(--border);
+  margin: 32px 0;
+}
+
+/* ── MOBILE ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .hero { padding: 40px 24px 36px; }
+  .section { padding: 40px 24px; }
+  .ep-desc { display: none; }
+}
+
+/* ── ANIMATIONS ───────────────────────────────────── */
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); animation: pulse 2s infinite;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-logo">
+    <div class="header-logo-icon">🎡</div>
+    SpinWheel Pro
+    <span class="header-badge">v2.0</span>
+  </div>
+  <div class="header-right">
+    <div class="header-search">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Search docs…
+      <span class="kbd">⌘K</span>
+    </div>
+    <a class="btn-postman" href="https://www.postman.com/collections" target="_blank" onclick="openPostman()">
+      <svg viewBox="0 0 32 32" fill="white"><path d="M16 0C7.163 0 0 7.163 0 16s7.163 16 16 16 16-7.163 16-16S24.837 0 16 0zm0 29C8.82 29 3 23.18 3 16S8.82 3 16 3s13 5.82 13 13-5.82 13-13 13z"/><path d="M20.5 11.5l-9 5.196V8.304L20.5 11.5z"/></svg>
+      Run in Postman
+    </a>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════════════ -->
+<nav class="sidebar">
+  <div class="sb-section-label">Getting Started</div>
+  <a class="sb-link active" onclick="scrollTo('intro')">Introduction</a>
+  <a class="sb-link" onclick="scrollTo('auth')">Authentication</a>
+  <a class="sb-link" onclick="scrollTo('baseurl')">Base URL & Versioning</a>
+  <a class="sb-link" onclick="scrollTo('ratelimits')">Rate Limits</a>
+  <a class="sb-link" onclick="scrollTo('errors')">Error Handling</a>
+
+  <div class="sb-section-label">Spin API</div>
+  <a class="sb-link" onclick="scrollTo('spin-submit')">
+    <span class="sb-method m-post">POST</span>Submit Spin
+  </a>
+
+  <div class="sb-section-label">Projects</div>
+  <a class="sb-link" onclick="scrollTo('proj-list')">
+    <span class="sb-method m-get">GET</span>List Projects
+  </a>
+  <a class="sb-link" onclick="scrollTo('proj-get')">
+    <span class="sb-method m-get">GET</span>Get Project
+  </a>
+  <a class="sb-link" onclick="scrollTo('proj-stats')">
+    <span class="sb-method m-get">GET</span>Project Stats
+  </a>
+
+  <div class="sb-section-label">Participants</div>
+  <a class="sb-link" onclick="scrollTo('part-list')">
+    <span class="sb-method m-get">GET</span>List Participants
+  </a>
+  <a class="sb-link" onclick="scrollTo('part-get')">
+    <span class="sb-method m-get">GET</span>Get Participant
+  </a>
+  <a class="sb-link" onclick="scrollTo('part-export')">
+    <span class="sb-method m-get">GET</span>Export CSV / JSON
+  </a>
+
+  <div class="sb-section-label">Wheel Options</div>
+  <a class="sb-link" onclick="scrollTo('wheel-list')">
+    <span class="sb-method m-get">GET</span>List Options
+  </a>
+
+  <div class="sb-section-label">Webhooks</div>
+  <a class="sb-link" onclick="scrollTo('webhooks')">
+    <span class="sb-method m-ws">WH</span>Overview
+  </a>
+  <a class="sb-link" onclick="scrollTo('webhook-events')">
+    <span class="sb-method m-ws">WH</span>Event Types
+  </a>
+  <a class="sb-link" onclick="scrollTo('webhook-payload')">
+    <span class="sb-method m-ws">WH</span>Payload Format
+  </a>
+  <a class="sb-link" onclick="scrollTo('webhook-security')">
+    <span class="sb-method m-ws">WH</span>Signature Verification
+  </a>
+
+  <div class="sb-section-label">Success Messages</div>
+  <a class="sb-link" onclick="scrollTo('success-msg')">
+    <span class="sb-method m-put">PUT</span>Update Prize Message
+  </a>
+  <a class="sb-link" onclick="scrollTo('webhook-trigger')">
+    <span class="sb-method m-ws">WH</span>Trigger by Prize Won
+  </a>
+
+  <div class="sb-section-label">SDK & Tools</div>
+  <a class="sb-link" onclick="scrollTo('sdks')">SDKs & Libraries</a>
+  <a class="sb-link" onclick="scrollTo('postman')">Postman Collection</a>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     MAIN
+══════════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- HERO -->
+  <div class="hero" id="intro">
+    <div class="hero-eyebrow">API Reference</div>
+    <h1>Build anything with<br><em>SpinWheel Pro</em></h1>
+    <p class="hero-desc">
+      A RESTful API to manage campaigns, submit spins, retrieve participants, and integrate webhooks into any application — Shopify, Salesforce, custom CRMs, or your own stack.
+    </p>
+    <div class="hero-meta">
+      <div class="hero-stat">
+        <div class="live-dot"></div>
+        <span>API Status: Operational</span>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-dot" style="background:var(--a)"></div>
+        REST · JSON · HTTPS
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-dot" style="background:var(--lime)"></div>
+        API Version 1.0
+      </div>
+    </div>
+    <div class="base-url-block">
+      <div class="base-url-label">Base URL</div>
+      <div class="base-url-val" id="baseUrlVal">https://yoursite.com/api/v1</div>
+      <button class="btn-copy-base" onclick="copyBase()">📋 Copy</button>
+    </div>
+  </div>
+
+  <!-- ── AUTHENTICATION ─────────────────────────────── -->
+  <section class="section" id="auth">
+    <div class="breadcrumb">Docs <span>/</span> Getting Started <span>/</span> Authentication</div>
+    <div class="section-eyebrow">Authentication</div>
+    <div class="section-title">Securing your API requests</div>
+    <div class="section-desc">
+      SpinWheel Pro uses API key authentication via the <code style="font-family:'JetBrains Mono',monospace;color:var(--a2);font-size:13px">Authorization</code> header. Your API key is generated in Admin → Settings → Tenant Identity.
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body">
+        <strong>Keep your API key secret</strong>
+        Never expose your API key in client-side JavaScript, mobile app code, or public repositories. If compromised, regenerate it immediately from the Settings panel.
+      </div>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-card-title">Bearer Token Authentication</div>
+      <div class="auth-card-desc">
+        Pass your API key in every request using the <strong>Authorization</strong> header. Also include the <strong>X-Domain</strong> header matching your registered tenant domain — requests from unregistered domains are rejected.
+      </div>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-lang"><span>HTTP</span>Request Headers</div>
+          <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+        </div>
+        <pre><span class="c-hdr">Authorization</span>: Bearer swp_live_4f8a2c1e9b3d7f6a0e5c8b2d4f1a7e3c
+<span class="c-hdr">Content-Type</span>: application/json
+<span class="c-hdr">X-Domain</span>: yourcompany.com</pre>
+      </div>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-card-title">Finding Your API Key</div>
+      <div class="auth-card-desc">Login to Admin → Settings → Tenant Identity → copy the API Key field. You can regenerate it at any time — previous key is immediately invalidated.</div>
+    </div>
+  </section>
+
+  <!-- ── BASE URL ────────────────────────────────────── -->
+  <section class="section" id="baseurl">
+    <div class="section-eyebrow">Base URL & Versioning</div>
+    <div class="section-title">Endpoints & versioning</div>
+    <div class="section-desc">All API endpoints are versioned under <code style="font-family:'JetBrains Mono',monospace;color:var(--lime);font-size:13px">/api/v1/</code>. The current version is <strong>v1</strong>. Breaking changes will always be released under a new version number with a migration period.</div>
+
+    <div class="code-wrap" style="margin-bottom:20px">
+      <div class="code-header">
+        <div class="code-lang"><span>ENV</span>Your Installation</div>
+        <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+      </div>
+      <pre><span class="c-cmt"># Replace with your actual domain</span>
+<span class="c-key">BASE_URL</span>=<span class="c-str">https://yoursite.com/api/v1</span>
+<span class="c-key">API_KEY</span>=<span class="c-str">swp_live_your_key_here</span>
+<span class="c-key">DOMAIN</span>=<span class="c-str">yourcompany.com</span></pre>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-body">
+        <strong>Self-hosted API</strong>
+        SpinWheel Pro is self-hosted — the base URL is always your own domain. There is no shared cloud endpoint. All data stays on your server.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RATE LIMITS ─────────────────────────────────── -->
+  <section class="section" id="ratelimits">
+    <div class="section-eyebrow">Rate Limits</div>
+    <div class="section-title">Request throttling</div>
+    <div class="section-desc">Rate limits protect the API from abuse. Limits apply per API key per rolling window. Exceeding limits returns <code style="font-family:'JetBrains Mono',monospace;color:#fb7185;font-size:13px">429 Too Many Requests</code>.</div>
+
+    <div class="rate-grid">
+      <div class="rate-card">
+        <div class="rate-num">1,000</div>
+        <div class="rate-unit">requests</div>
+        <div class="rate-label">per hour</div>
+      </div>
+      <div class="rate-card">
+        <div class="rate-num">100</div>
+        <div class="rate-unit">spin submissions</div>
+        <div class="rate-label">per 10 minutes</div>
+      </div>
+      <div class="rate-card">
+        <div class="rate-num">10,000</div>
+        <div class="rate-unit">spins</div>
+        <div class="rate-label">per month (plan limit)</div>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-lang"><span>HTTP</span>Rate Limit Response Headers</div>
+      </div>
+      <pre><span class="c-hdr">X-RateLimit-Limit</span>: 1000
+<span class="c-hdr">X-RateLimit-Remaining</span>: 987
+<span class="c-hdr">X-RateLimit-Reset</span>: 1735689600
+<span class="c-hdr">Retry-After</span>: 3600  <span class="c-cmt">(only on 429)</span></pre>
+    </div>
+  </section>
+
+  <!-- ── ERRORS ──────────────────────────────────────── -->
+  <section class="section" id="errors">
+    <div class="section-eyebrow">Error Handling</div>
+    <div class="section-title">Error responses</div>
+    <div class="section-desc">All errors return a consistent JSON structure. Always check the <code style="font-family:'JetBrains Mono',monospace;color:var(--a2);font-size:13px">success</code> field first. HTTP status codes align with standard REST conventions.</div>
+
+    <div class="ep-grid" style="margin-bottom:24px">
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-lang"><span style="color:#fb7185">4xx</span>Error Response</div>
+        </div>
+        <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>: <span class="c-bool">false</span>,
+  <span class="c-key">"message"</span>: <span class="c-str">"Campaign not found or inactive."</span>,
+  <span class="c-key">"code"</span>:    <span class="c-str">"CAMPAIGN_NOT_FOUND"</span>,
+  <span class="c-key">"status"</span>:  <span class="c-num">404</span>
+<span class="c-bracket">}</span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-lang"><span style="color:#fb7185">403</span>Duplicate Email</div>
+        </div>
+        <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>:      <span class="c-bool">false</span>,
+  <span class="c-key">"already_used"</span>: <span class="c-bool">true</span>,
+  <span class="c-key">"message"</span>:      <span class="c-str">"Email already used for
+               this campaign."</span>,
+  <span class="c-key">"code"</span>:         <span class="c-str">"EMAIL_DUPLICATE"</span>
+<span class="c-bracket">}</span></pre>
+      </div>
+    </div>
+
+    <div class="error-grid">
+      <div class="error-row">
+        <div class="error-code" style="color:#34d399">200</div>
+        <div><div class="error-name">OK</div><div class="error-desc">Request succeeded. Check <code style="font-family:'JetBrains Mono',monospace;font-size:11px">success: true</code> in body.</div></div>
+      </div>
+      <div class="error-row">
+        <div class="error-code" style="color:#fbbf24">400</div>
+        <div><div class="error-name">Bad Request</div><div class="error-desc">Missing or invalid parameters. Check the <code style="font-family:'JetBrains Mono',monospace;font-size:11px">message</code> field for details.</div></div>
+      </div>
+      <div class="error-row">
+        <div class="error-code" style="color:#fb7185">401</div>
+        <div><div class="error-name">Unauthorized</div><div class="error-desc">Missing or invalid API key. Check your Authorization header.</div></div>
+      </div>
+      <div class="error-row">
+        <div class="error-code" style="color:#fb7185">403</div>
+        <div><div class="error-name">Forbidden</div><div class="error-desc">Valid key but insufficient permissions, wrong domain, or duplicate email submission.</div></div>
+      </div>
+      <div class="error-row">
+        <div class="error-code" style="color:#fb7185">404</div>
+        <div><div class="error-name">Not Found</div><div class="error-desc">Resource does not exist or is inactive/archived.</div></div>
+      </div>
+      <div class="error-row">
+        <div class="error-code" style="color:#fb7185">429</div>
+        <div><div class="error-name">Too Many Requests</div><div class="error-desc">Rate limit exceeded. Retry after the time in <code style="font-family:'JetBrains Mono',monospace;font-size:11px">Retry-After</code> header.</div></div>
+      </div>
+      <div class="error-row">
+        <div class="error-code" style="color:#fb7185">500</div>
+        <div><div class="error-name">Server Error</div><div class="error-desc">Internal error. Enable DEBUG_MODE temporarily and check PHP error logs.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SPIN API
+  ══════════════════════════════════════════════════ -->
+  <section class="section" id="spin-submit">
+    <div class="breadcrumb">Docs <span>/</span> Spin API <span>/</span> Submit Spin</div>
+    <div class="section-eyebrow">Spin API</div>
+    <div class="section-title">Submit a spin entry</div>
+    <div class="section-desc">The core API endpoint. Validates form answers, checks for duplicate emails, runs the probability engine, saves the participant, and returns the winner.</div>
+
+    <!-- Endpoint Card -->
+    <div class="endpoint-card">
+      <div class="endpoint-header open" onclick="toggleEp(this)">
+        <span class="ep-method m-post">POST</span>
+        <span class="ep-path">/api/spin.php</span>
+        <span class="ep-desc">Submit form + trigger spin</span>
+        <span class="ep-chevron open">▾</span>
+      </div>
+      <div class="endpoint-body open">
+        <div class="callout callout-info">
+          <div class="callout-icon">ℹ️</div>
+          <div class="callout-body">
+            <strong>multipart/form-data required</strong>
+            This endpoint uses <code style="font-family:'JetBrains Mono',monospace;font-size:12px">multipart/form-data</code> (not JSON) to support file uploads. Form question answers are submitted as <code style="font-family:'JetBrains Mono',monospace;font-size:12px">q_{id}</code> field names.
+          </div>
+        </div>
+
+        <div class="ep-grid">
+          <div>
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'req-params')">Parameters</button>
+              <button class="tab" onclick="switchTab(this,'req-curl')">cURL</button>
+              <button class="tab" onclick="switchTab(this,'req-php')">PHP</button>
+              <button class="tab" onclick="switchTab(this,'req-js')">JavaScript</button>
+            </div>
+
+            <div class="tab-panel active" id="req-params">
+              <table class="params-table">
+                <thead>
+                  <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="param-name">csrf_token</td>
+                    <td class="param-type">string</td>
+                    <td><span class="param-req req">Required</span></td>
+                    <td class="param-desc">CSRF token from the spin page session. Obtained by loading <code style="font-family:'JetBrains Mono',monospace;font-size:11px">/spin/index.php?p=TOKEN</code> first.</td>
+                  </tr>
+                  <tr>
+                    <td class="param-name">project_token</td>
+                    <td class="param-type">string</td>
+                    <td><span class="param-req req">Required</span></td>
+                    <td class="param-desc">Unique project slug. Find it in Admin → Projects → URL column (e.g. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">black-friday</code>).</td>
+                  </tr>
+                  <tr>
+                    <td class="param-name">q_{id}</td>
+                    <td class="param-type">mixed</td>
+                    <td><span class="param-req opt">Varies</span></td>
+                    <td class="param-desc">Form answers keyed by question ID. e.g. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">q_1</code> for question #1. Required questions must be non-empty.</td>
+                  </tr>
+                  <tr>
+                    <td class="param-name">q_{id}[]</td>
+                    <td class="param-type">array</td>
+                    <td><span class="param-req opt">Optional</span></td>
+                    <td class="param-desc">Checkbox answers — submit multiple values for the same key using array notation.</td>
+                  </tr>
+                  <tr>
+                    <td class="param-name">q_{id}</td>
+                    <td class="param-type">file</td>
+                    <td><span class="param-req opt">Optional</span></td>
+                    <td class="param-desc">File upload questions. Max 10MB. Allowed: PDF, DOC, DOCX, PNG, JPG, GIF.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="tab-panel" id="req-curl">
+              <div class="code-wrap">
+                <div class="code-header">
+                  <div class="code-lang"><span>cURL</span></div>
+                  <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+                </div>
+                <pre><span class="c-method">curl</span> -X POST <span class="c-url">https://yoursite.com/api/spin.php</span> \
+  -F <span class="c-str">"csrf_token=YOUR_CSRF_TOKEN"</span> \
+  -F <span class="c-str">"project_token=black-friday"</span> \
+  -F <span class="c-str">"q_1=Jane Smith"</span> \
+  -F <span class="c-str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cdbc92fff0a7aca3a88dacaea0a8aea2bfbde3aea2a0">[email&#160;protected]</a>"</span> \
+  -F <span class="c-str">"q_3=Acme Corp"</span></pre>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="req-php">
+              <div class="code-wrap">
+                <div class="code-header">
+                  <div class="code-lang"><span>PHP</span>cURL</div>
+                  <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+                </div>
+                <pre><span class="c-cmt">// Step 1: Get CSRF token by loading spin page</span>
+$ch = <span class="c-method">curl_init</span>();
+<span class="c-method">curl_setopt_array</span>($ch, [
+  CURLOPT_URL => <span class="c-str">'https://yoursite.com/spin/index.php?p=black-friday'</span>,
+  CURLOPT_COOKIEJAR  => <span class="c-str">'/tmp/swp_cookies.txt'</span>,
+  CURLOPT_COOKIEFILE => <span class="c-str">'/tmp/swp_cookies.txt'</span>,
+  CURLOPT_RETURNTRANSFER => <span class="c-bool">true</span>,
+]);
+$html = <span class="c-method">curl_exec</span>($ch);
+<span class="c-method">preg_match</span>(<span class="c-str">'/name="csrf_token" value="([^"]+)"/'</span>, $html, $m);
+$csrf = $m[<span class="c-num">1</span>];
+
+<span class="c-cmt">// Step 2: Submit spin</span>
+<span class="c-method">curl_setopt_array</span>($ch, [
+  CURLOPT_URL        => <span class="c-str">'https://yoursite.com/api/spin.php'</span>,
+  CURLOPT_POST       => <span class="c-bool">true</span>,
+  CURLOPT_POSTFIELDS => [
+    <span class="c-str">'csrf_token'</span>    => $csrf,
+    <span class="c-str">'project_token'</span> => <span class="c-str">'black-friday'</span>,
+    <span class="c-str">'q_1'</span>           => <span class="c-str">'Jane Smith'</span>,
+    <span class="c-str">'q_2'</span>           => <span class="c-str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="88e2e9e6edc8e9ebe5edebe7faf8a6ebe7e5">[email&#160;protected]</a>'</span>,
+  ],
+]);
+$response = <span class="c-method">curl_exec</span>($ch);
+$data = <span class="c-method">json_decode</span>($response, <span class="c-bool">true</span>);
+
+<span class="c-key">echo</span> $data[<span class="c-str">'winner'</span>][<span class="c-str">'name'</span>]; <span class="c-cmt">// "50% Off Voucher"</span></pre>
+              </div>
+            </div>
+
+            <div class="tab-panel" id="req-js">
+              <div class="code-wrap">
+                <div class="code-header">
+                  <div class="code-lang"><span>JS</span>Fetch API</div>
+                  <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+                </div>
+                <pre><span class="c-cmt">// Build form data</span>
+<span class="c-key">const</span> fd = <span class="c-key">new</span> <span class="c-method">FormData</span>();
+fd.<span class="c-method">append</span>(<span class="c-str">'csrf_token'</span>,    csrfToken);
+fd.<span class="c-method">append</span>(<span class="c-str">'project_token'</span>, <span class="c-str">'black-friday'</span>);
+fd.<span class="c-method">append</span>(<span class="c-str">'q_1'</span>, <span class="c-str">'Jane Smith'</span>);
+fd.<span class="c-method">append</span>(<span class="c-str">'q_2'</span>, <span class="c-str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f99398979cb9989a949c9a968b89d79a9694">[email&#160;protected]</a>'</span>);
+fd.<span class="c-method">append</span>(<span class="c-str">'q_3'</span>, <span class="c-str">'Acme Corp'</span>);
+
+<span class="c-key">const</span> res  = <span class="c-key">await</span> <span class="c-method">fetch</span>(<span class="c-str">'/api/spin.php'</span>, {
+  method: <span class="c-str">'POST'</span>, body: fd
+});
+<span class="c-key">const</span> data = <span class="c-key">await</span> res.<span class="c-method">json</span>();
+
+<span class="c-key">if</span> (data.success) {
+  <span class="c-method">console</span>.<span class="c-method">log</span>(<span class="c-str">'Winner:'</span>, data.winner.name);
+  <span class="c-method">console</span>.<span class="c-method">log</span>(<span class="c-str">'Message:'</span>, data.winner.success_msg);
+}</pre>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:10px;font-family:'JetBrains Mono',monospace">Responses</div>
+            <div class="resp-badges">
+              <div class="resp-badge r200 active" onclick="switchResp(this,'resp-200-spin')">200 Success</div>
+              <div class="resp-badge r400" onclick="switchResp(this,'resp-400-spin')">400 Validation</div>
+              <div class="resp-badge r403" onclick="switchResp(this,'resp-403-spin')">403 Duplicate</div>
+              <div class="resp-badge r404" onclick="switchResp(this,'resp-404-spin')">404 Not Found</div>
+            </div>
+
+            <div id="resp-200-spin" class="code-wrap">
+              <div class="code-header">
+                <div class="code-lang"><span style="color:#34d399">200</span>Success</div>
+                <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+              </div>
+              <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>:        <span class="c-bool">true</span>,
+  <span class="c-key">"winner"</span>: <span class="c-bracket">{</span>
+    <span class="c-key">"id"</span>:          <span class="c-num">3</span>,
+    <span class="c-key">"name"</span>:        <span class="c-str">"50% Off Voucher"</span>,
+    <span class="c-key">"success_msg"</span>: <span class="c-str">"🎉 You won 50% off!
+                    Code: BF50"</span>,
+    <span class="c-key">"color"</span>:       <span class="c-str">"#6366f1"</span>
+  <span class="c-bracket">}</span>,
+  <span class="c-key">"participant_id"</span>: <span class="c-num">142</span>
+<span class="c-bracket">}</span></pre>
+            </div>
+
+            <div id="resp-400-spin" class="code-wrap" style="display:none">
+              <div class="code-header"><div class="code-lang"><span style="color:#fbbf24">400</span>Validation Error</div></div>
+              <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>: <span class="c-bool">false</span>,
+  <span class="c-key">"message"</span>: <span class="c-str">"Work Email is required."</span>
+<span class="c-bracket">}</span></pre>
+            </div>
+
+            <div id="resp-403-spin" class="code-wrap" style="display:none">
+              <div class="code-header"><div class="code-lang"><span style="color:#fb7185">403</span>Duplicate Email</div></div>
+              <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>:      <span class="c-bool">false</span>,
+  <span class="c-key">"already_used"</span>: <span class="c-bool">true</span>,
+  <span class="c-key">"message"</span>:      <span class="c-str">"This email has already
+               been used."</span>
+<span class="c-bracket">}</span></pre>
+            </div>
+
+            <div id="resp-404-spin" class="code-wrap" style="display:none">
+              <div class="code-header"><div class="code-lang"><span style="color:#fb7185">404</span>Not Found</div></div>
+              <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>: <span class="c-bool">false</span>,
+  <span class="c-key">"message"</span>: <span class="c-str">"Campaign not found
+             or inactive."</span>
+<span class="c-bracket">}</span></pre>
+            </div>
+
+            <!-- Try It -->
+            <div class="try-it">
+              <div class="try-it-header">
+                <span>⚡ Try It</span>
+                <span style="color:var(--t3);font-size:11px">Live request</span>
+              </div>
+              <div class="try-it-body">
+                <div class="try-field">
+                  <div class="try-label">Base URL</div>
+                  <input class="try-input" id="ti-baseurl" placeholder="https://yoursite.com" value="https://yoursite.com">
+                </div>
+                <div class="try-field">
+                  <div class="try-label">Project Token</div>
+                  <input class="try-input" id="ti-token" placeholder="black-friday" value="test-it">
+                </div>
+                <div class="try-field">
+                  <div class="try-label">Name (q_1)</div>
+                  <input class="try-input" id="ti-name" placeholder="Jane Smith" value="Jane Smith">
+                </div>
+                <div class="try-field">
+                  <div class="try-label">Email (q_2)</div>
+                  <input class="try-input" id="ti-email" placeholder="jane@acmecorp.com" value="jane@acmecorp.com">
+                </div>
+                <button class="btn-run" onclick="trySpin()">
+                  <span>▶</span> Send Request
+                </button>
+                <div class="try-response" id="ti-resp"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       PROJECTS
+  ══════════════════════════════════════════════════ -->
+  <section class="section" id="proj-list">
+    <div class="breadcrumb">Docs <span>/</span> Projects</div>
+    <div class="section-eyebrow">Projects</div>
+    <div class="section-title">Project endpoints</div>
+    <div class="section-desc">Manage your spin wheel campaigns. Each project has its own wheel options, form, and participant database.</div>
+
+    <!-- List Projects -->
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEp(this)">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/projects</span>
+        <span class="ep-desc">List all active projects</span>
+        <span class="ep-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="ep-grid">
+          <div>
+            <table class="params-table" style="margin-bottom:16px">
+              <thead><tr><th>Header</th><th>Value</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">Authorization</td><td class="param-desc">Bearer <em style="color:var(--a2)">your_api_key</em></td></tr>
+                <tr><td class="param-name">X-Domain</td><td class="param-desc">yourcompany.com</td></tr>
+              </tbody>
+            </table>
+            <table class="params-table">
+              <thead><tr><th>Query Param</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">status</td><td class="param-type">string</td><td><span class="param-req opt">Optional</span></td><td class="param-desc">Filter by status: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">active</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">inactive</code>, <code style="font-family:'JetBrains Mono',monospace;font-size:11px">all</code>. Default: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">active</code></td></tr>
+                <tr><td class="param-name">limit</td><td class="param-type">integer</td><td><span class="param-req opt">Optional</span></td><td class="param-desc">Max results per page. Default: 20, Max: 100</td></tr>
+                <tr><td class="param-name">page</td><td class="param-type">integer</td><td><span class="param-req opt">Optional</span></td><td class="param-desc">Page number for pagination. Default: 1</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="code-wrap">
+              <div class="code-header">
+                <div class="code-lang"><span style="color:#34d399">200</span>Response</div>
+                <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+              </div>
+              <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>: <span class="c-bool">true</span>,
+  <span class="c-key">"total"</span>:   <span class="c-num">3</span>,
+  <span class="c-key">"page"</span>:    <span class="c-num">1</span>,
+  <span class="c-key">"data"</span>: <span class="c-bracket">[</span>
+    <span class="c-bracket">{</span>
+      <span class="c-key">"id"</span>:          <span class="c-num">1</span>,
+      <span class="c-key">"name"</span>:        <span class="c-str">"Black Friday Sale"</span>,
+      <span class="c-key">"token"</span>:       <span class="c-str">"black-friday"</span>,
+      <span class="c-key">"color"</span>:       <span class="c-str">"#6366f1"</span>,
+      <span class="c-key">"status"</span>:      <span class="c-str">"active"</span>,
+      <span class="c-key">"spin_count"</span>:  <span class="c-num">142</span>,
+      <span class="c-key">"spin_url"</span>:   <span class="c-str">"https://site.com/spin/
+                    index.php?p=black-friday"</span>,
+      <span class="c-key">"created_at"</span>:  <span class="c-str">"2025-11-01T09:00:00Z"</span>
+    <span class="c-bracket">}</span>
+  <span class="c-bracket">]</span>
+<span class="c-bracket">}</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Get Project -->
+    <div class="endpoint-card" id="proj-get">
+      <div class="endpoint-header" onclick="toggleEp(this)">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/projects/<em>{token}</em></span>
+        <span class="ep-desc">Get single project details</span>
+        <span class="ep-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="ep-grid">
+          <div>
+            <table class="params-table">
+              <thead><tr><th>Path Param</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">token</td><td class="param-type">string</td><td><span class="param-req req">Required</span></td><td class="param-desc">Project URL slug (e.g. <code style="font-family:'JetBrains Mono',monospace;font-size:11px">black-friday</code>)</td></tr>
+              </tbody>
+            </table>
+            <div class="divider"></div>
+            <div class="code-wrap">
+              <div class="code-header"><div class="code-lang"><span>cURL</span></div><button class="btn-copy" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="c-method">curl</span> <span class="c-url">https://yoursite.com/api/v1/projects/black-friday</span> \
+  -H <span class="c-str">"Authorization: Bearer swp_live_..."</span> \
+  -H <span class="c-str">"X-Domain: yourcompany.com"</span></pre>
+            </div>
+          </div>
+          <div>
+            <div class="code-wrap">
+              <div class="code-header"><div class="code-lang"><span style="color:#34d399">200</span>Response</div><button class="btn-copy" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>: <span class="c-bool">true</span>,
+  <span class="c-key">"data"</span>: <span class="c-bracket">{</span>
+    <span class="c-key">"id"</span>:          <span class="c-num">1</span>,
+    <span class="c-key">"name"</span>:        <span class="c-str">"Black Friday Sale"</span>,
+    <span class="c-key">"description"</span>: <span class="c-str">"Annual campaign"</span>,
+    <span class="c-key">"token"</span>:       <span class="c-str">"black-friday"</span>,
+    <span class="c-key">"color"</span>:       <span class="c-str">"#6366f1"</span>,
+    <span class="c-key">"status"</span>:      <span class="c-str">"active"</span>,
+    <span class="c-key">"spin_count"</span>:  <span class="c-num">142</span>,
+    <span class="c-key">"wheel_options"</span>: <span class="c-bracket">[</span>...<span class="c-bracket">]</span>,
+    <span class="c-key">"form_config"</span>:   <span class="c-bracket">{</span>...<span class="c-bracket">}</span>,
+    <span class="c-key">"created_at"</span>:  <span class="c-str">"2025-11-01"</span>
+  <span class="c-bracket">}</span>
+<span class="c-bracket">}</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project Stats -->
+    <div class="endpoint-card" id="proj-stats">
+      <div class="endpoint-header" onclick="toggleEp(this)">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/api/v1/project_stats.php?project_id=<em>{id}</em></span>
+        <span class="ep-desc">Spin stats for a project</span>
+        <span class="ep-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="ep-grid">
+          <div>
+            <div class="callout callout-info">
+              <div class="callout-icon">🔐</div>
+              <div class="callout-body"><strong>Admin session required</strong>This endpoint requires an active admin session cookie (used internally by the admin panel).</div>
+            </div>
+            <table class="params-table">
+              <thead><tr><th>Param</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">project_id</td><td class="param-type">integer</td><td><span class="param-req req">Required</span></td><td class="param-desc">Numeric project ID from database</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="code-wrap">
+              <div class="code-header"><div class="code-lang"><span style="color:#34d399">200</span>Response</div><button class="btn-copy" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>:      <span class="c-bool">true</span>,
+  <span class="c-key">"participants"</span>: <span class="c-num">142</span>,
+  <span class="c-key">"last_spin"</span>:    <span class="c-str">"2025-11-25 14:32:00"</span>
+<span class="c-bracket">}</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       PARTICIPANTS
+  ══════════════════════════════════════════════════ -->
+  <section class="section" id="part-list">
+    <div class="breadcrumb">Docs <span>/</span> Participants</div>
+    <div class="section-eyebrow">Participants</div>
+    <div class="section-title">Participant endpoints</div>
+    <div class="section-desc">Access spin participants, their form answers, results, and timestamps. All endpoints require API key authentication.</div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEp(this)">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/projects/<em>{token}</em>/participants</span>
+        <span class="ep-desc">List all participants for a project</span>
+        <span class="ep-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="ep-grid">
+          <div>
+            <table class="params-table">
+              <thead><tr><th>Param</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">token</td><td class="param-type">string</td><td><span class="param-req req">Required</span></td><td class="param-desc">Project URL slug</td></tr>
+                <tr><td class="param-name">limit</td><td class="param-type">integer</td><td><span class="param-req opt">Optional</span></td><td class="param-desc">Results per page. Default: 25, Max: 100</td></tr>
+                <tr><td class="param-name">page</td><td class="param-type">integer</td><td><span class="param-req opt">Optional</span></td><td class="param-desc">Page number</td></tr>
+                <tr><td class="param-name">from</td><td class="param-type">date</td><td><span class="param-req opt">Optional</span></td><td class="param-desc">Filter from date. Format: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">YYYY-MM-DD</code></td></tr>
+                <tr><td class="param-name">to</td><td class="param-type">date</td><td><span class="param-req opt">Optional</span></td><td class="param-desc">Filter to date. Format: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">YYYY-MM-DD</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="code-wrap">
+              <div class="code-header"><div class="code-lang"><span style="color:#34d399">200</span>Response</div><button class="btn-copy" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>: <span class="c-bool">true</span>,
+  <span class="c-key">"total"</span>:   <span class="c-num">142</span>,
+  <span class="c-key">"page"</span>:    <span class="c-num">1</span>,
+  <span class="c-key">"data"</span>: <span class="c-bracket">[</span>
+    <span class="c-bracket">{</span>
+      <span class="c-key">"id"</span>:          <span class="c-num">142</span>,
+      <span class="c-key">"result_name"</span>: <span class="c-str">"50% Off Voucher"</span>,
+      <span class="c-key">"ip_address"</span>:  <span class="c-str">"192.168.1.1"</span>,
+      <span class="c-key">"spun_at"</span>:     <span class="c-str">"2025-11-25T14:32:00Z"</span>,
+      <span class="c-key">"answers"</span>: <span class="c-bracket">[</span>
+        <span class="c-bracket">{</span>
+          <span class="c-key">"question"</span>: <span class="c-str">"Full Name"</span>,
+          <span class="c-key">"answer"</span>:   <span class="c-str">"Jane Smith"</span>
+        <span class="c-bracket">}</span>
+      <span class="c-bracket">]</span>
+    <span class="c-bracket">}</span>
+  <span class="c-bracket">]</span>
+<span class="c-bracket">}</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Get participant -->
+    <div class="endpoint-card" id="part-get">
+      <div class="endpoint-header" onclick="toggleEp(this)">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/api/v1/participant.php?id=<em>{id}</em></span>
+        <span class="ep-desc">Get full participant + all answers</span>
+        <span class="ep-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="ep-grid">
+          <div>
+            <table class="params-table">
+              <thead><tr><th>Param</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">id</td><td class="param-type">integer</td><td><span class="param-req req">Required</span></td><td class="param-desc">Participant ID from the participants table</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="code-wrap">
+              <div class="code-header"><div class="code-lang"><span style="color:#34d399">200</span>Response</div><button class="btn-copy" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>:  <span class="c-bool">true</span>,
+  <span class="c-key">"result"</span>:   <span class="c-str">"50% Off Voucher"</span>,
+  <span class="c-key">"project"</span>:  <span class="c-str">"Black Friday Sale"</span>,
+  <span class="c-key">"spun_at"</span>:  <span class="c-str">"2025-11-25 14:32:00"</span>,
+  <span class="c-key">"answers"</span>: <span class="c-bracket">[</span>
+    <span class="c-bracket">{</span>
+      <span class="c-key">"question"</span>:  <span class="c-str">"Full Name"</span>,
+      <span class="c-key">"type"</span>:      <span class="c-str">"short"</span>,
+      <span class="c-key">"answer"</span>:    <span class="c-str">"Jane Smith"</span>,
+      <span class="c-key">"file_path"</span>: <span class="c-null">null</span>,
+      <span class="c-key">"file_name"</span>: <span class="c-null">null</span>
+    <span class="c-bracket">}</span>,
+    <span class="c-bracket">{</span>
+      <span class="c-key">"question"</span>:  <span class="c-str">"Resume"</span>,
+      <span class="c-key">"type"</span>:      <span class="c-str">"file"</span>,
+      <span class="c-key">"answer"</span>:    <span class="c-str">"resume.pdf"</span>,
+      <span class="c-key">"file_path"</span>: <span class="c-str">"a1b2c3_1700000.pdf"</span>,
+      <span class="c-key">"file_name"</span>: <span class="c-str">"resume.pdf"</span>
+    <span class="c-bracket">}</span>
+  <span class="c-bracket">]</span>
+<span class="c-bracket">}</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div class="endpoint-card" id="part-export">
+      <div class="endpoint-header" onclick="toggleEp(this)">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/admin/export.php?project_id=<em>{id}</em>&amp;format=<em>{csv|json}</em></span>
+        <span class="ep-desc">Export participant data</span>
+        <span class="ep-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="callout callout-tip">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <strong>Direct file download</strong>
+            Returns a file download response (not JSON). CSV includes UTF-8 BOM for Excel compatibility. JSON is formatted for CRM imports.
+          </div>
+        </div>
+        <div class="ep-grid">
+          <div>
+            <table class="params-table">
+              <thead><tr><th>Param</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">project_id</td><td class="param-type">integer</td><td><span class="param-req req">Required</span></td><td class="param-desc">Numeric project ID</td></tr>
+                <tr><td class="param-name">format</td><td class="param-type">string</td><td><span class="param-req req">Required</span></td><td class="param-desc"><code style="font-family:'JetBrains Mono',monospace;font-size:11px">csv</code> or <code style="font-family:'JetBrains Mono',monospace;font-size:11px">json</code></td></tr>
+                <tr><td class="param-name">csrf_token</td><td class="param-type">string</td><td><span class="param-req req">Required</span></td><td class="param-desc">Admin CSRF token from session</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="code-wrap">
+              <div class="code-header"><div class="code-lang"><span>cURL</span>Download CSV</div><button class="btn-copy" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="c-method">curl</span> -o participants.csv \
+  <span class="c-str">"https://yoursite.com/admin/export.php
+  ?project_id=1&format=csv
+  &csrf_token=YOUR_TOKEN"</span> \
+  -H <span class="c-str">"Cookie: PHPSESSID=your_session"</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       WHEEL OPTIONS
+  ══════════════════════════════════════════════════ -->
+  <section class="section" id="wheel-list">
+    <div class="breadcrumb">Docs <span>/</span> Wheel Options</div>
+    <div class="section-eyebrow">Wheel Options</div>
+    <div class="section-title">Prize & wheel configuration</div>
+
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEp(this)">
+        <span class="ep-method m-get">GET</span>
+        <span class="ep-path">/projects/<em>{token}</em>/options</span>
+        <span class="ep-desc">List all wheel options for a project</span>
+        <span class="ep-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="ep-grid">
+          <div>
+            <table class="params-table">
+              <thead><tr><th>Param</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">token</td><td class="param-type">string</td><td><span class="param-req req">Required</span></td><td class="param-desc">Project URL slug</td></tr>
+                <tr><td class="param-name">status</td><td class="param-type">string</td><td><span class="param-req opt">Optional</span></td><td class="param-desc"><code style="font-family:'JetBrains Mono',monospace;font-size:11px">active</code> or <code style="font-family:'JetBrains Mono',monospace;font-size:11px">all</code>. Default: <code style="font-family:'JetBrains Mono',monospace;font-size:11px">active</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="code-wrap">
+              <div class="code-header"><div class="code-lang"><span style="color:#34d399">200</span>Response</div><button class="btn-copy" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>:   <span class="c-bool">true</span>,
+  <span class="c-key">"total_prob"</span>: <span class="c-num">100.0</span>,
+  <span class="c-key">"data"</span>: <span class="c-bracket">[</span>
+    <span class="c-bracket">{</span>
+      <span class="c-key">"id"</span>:          <span class="c-num">1</span>,
+      <span class="c-key">"name"</span>:        <span class="c-str">"50% Off Voucher"</span>,
+      <span class="c-key">"probability"</span>: <span class="c-num">25.0</span>,
+      <span class="c-key">"color"</span>:       <span class="c-str">"#6366f1"</span>,
+      <span class="c-key">"text_color"</span>:  <span class="c-str">"#ffffff"</span>,
+      <span class="c-key">"success_msg"</span>: <span class="c-str">"🎉 You won!"</span>,
+      <span class="c-key">"status"</span>:      <span class="c-str">"active"</span>,
+      <span class="c-key">"sort_order"</span>:  <span class="c-num">1</span>
+    <span class="c-bracket">}</span>
+  <span class="c-bracket">]</span>
+<span class="c-bracket">}</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       WEBHOOKS
+  ══════════════════════════════════════════════════ -->
+  <section class="section" id="webhooks">
+    <div class="breadcrumb">Docs <span>/</span> Webhooks</div>
+    <div class="section-eyebrow">Webhooks</div>
+    <div class="section-title">Real-time event notifications</div>
+    <div class="section-desc">
+      Webhooks let you receive real-time HTTP POST notifications when events happen in SpinWheel Pro — immediately push spin results to your CRM, email platform, Slack, or any custom system.
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-icon">🚀</div>
+      <div class="callout-body">
+        <strong>Use webhooks to:</strong>
+        Send winner emails automatically · Push leads to HubSpot/Salesforce · Trigger Zapier workflows · Post to Slack · Update inventory when prizes are claimed · Sync to your own database in real-time.
+      </div>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-card-title">Setting Up a Webhook</div>
+      <div class="auth-card-desc">Configure your webhook endpoint URL in Admin → Settings → Integrations → Webhooks. SpinWheel Pro will POST a JSON payload to your URL every time a watched event fires.</div>
+    </div>
+  </section>
+
+  <section class="section" id="webhook-events">
+    <div class="section-eyebrow">Webhooks</div>
+    <div class="section-title">Event types</div>
+    <div class="section-desc">Subscribe to one or more event types. Unsubscribed events are not sent to your endpoint.</div>
+
+    <div class="webhook-events">
+      <div class="webhook-event">
+        <div class="we-name">spin.completed</div>
+        <div class="we-desc">Fires every time a participant successfully completes a spin. Includes winner details and all form answers.</div>
+      </div>
+      <div class="webhook-event">
+        <div class="we-name">spin.duplicate</div>
+        <div class="we-desc">Fires when a spin is blocked due to duplicate email. Useful for tracking attempted re-entries.</div>
+      </div>
+      <div class="webhook-event">
+        <div class="we-name">project.created</div>
+        <div class="we-desc">Fires when a new project is created in the admin panel.</div>
+      </div>
+      <div class="webhook-event">
+        <div class="we-name">project.updated</div>
+        <div class="we-desc">Fires when a project's name, status, colour, or slug is changed.</div>
+      </div>
+      <div class="webhook-event">
+        <div class="we-name">project.deleted</div>
+        <div class="we-desc">Fires when a project is permanently deleted. Payload includes the last known token for reference.</div>
+      </div>
+      <div class="webhook-event">
+        <div class="we-name">participant.exported</div>
+        <div class="we-desc">Fires when participant data is exported via the admin panel. Contains export format and record count.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="webhook-payload">
+    <div class="section-eyebrow">Webhooks</div>
+    <div class="section-title">Payload format</div>
+    <div class="section-desc">All webhook payloads share a consistent envelope structure. The <code style="font-family:'JetBrains Mono',monospace;color:var(--a2);font-size:13px">data</code> object varies by event type.</div>
+
+    <div class="ep-grid">
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-lang"><span>JSON</span>spin.completed payload</div>
+          <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+        </div>
+        <pre><span class="c-bracket">{</span>
+  <span class="c-key">"event"</span>:      <span class="c-str">"spin.completed"</span>,
+  <span class="c-key">"timestamp"</span>:  <span class="c-str">"2025-11-25T14:32:00Z"</span>,
+  <span class="c-key">"api_version"</span>: <span class="c-str">"v1"</span>,
+  <span class="c-key">"signature"</span>:  <span class="c-str">"sha256=a1b2c3d4..."</span>,
+  <span class="c-key">"data"</span>: <span class="c-bracket">{</span>
+    <span class="c-key">"participant_id"</span>: <span class="c-num">142</span>,
+    <span class="c-key">"project"</span>: <span class="c-bracket">{</span>
+      <span class="c-key">"id"</span>:    <span class="c-num">1</span>,
+      <span class="c-key">"name"</span>:  <span class="c-str">"Black Friday Sale"</span>,
+      <span class="c-key">"token"</span>: <span class="c-str">"black-friday"</span>
+    <span class="c-bracket">}</span>,
+    <span class="c-key">"winner"</span>: <span class="c-bracket">{</span>
+      <span class="c-key">"id"</span>:          <span class="c-num">3</span>,
+      <span class="c-key">"name"</span>:        <span class="c-str">"50% Off Voucher"</span>,
+      <span class="c-key">"success_msg"</span>: <span class="c-str">"Code: BF50"</span>
+    <span class="c-bracket">}</span>,
+    <span class="c-key">"answers"</span>: <span class="c-bracket">[</span>
+      <span class="c-bracket">{</span>
+        <span class="c-key">"question"</span>: <span class="c-str">"Full Name"</span>,
+        <span class="c-key">"answer"</span>:   <span class="c-str">"Jane Smith"</span>
+      <span class="c-bracket">}</span>,
+      <span class="c-bracket">{</span>
+        <span class="c-key">"question"</span>: <span class="c-str">"Work Email"</span>,
+        <span class="c-key">"answer"</span>:   <span class="c-str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="107a717e755071737d753e737f7d">[email&#160;protected]</a>"</span>
+      <span class="c-bracket">}</span>
+    <span class="c-bracket">]</span>,
+    <span class="c-key">"ip_address"</span>: <span class="c-str">"203.0.113.1"</span>,
+    <span class="c-key">"spun_at"</span>:    <span class="c-str">"2025-11-25T14:32:00Z"</span>
+  <span class="c-bracket">}</span>
+<span class="c-bracket">}</span></pre>
+      </div>
+      <div>
+        <div class="code-wrap" style="margin-bottom:16px">
+          <div class="code-header">
+            <div class="code-lang"><span>JSON</span>project.deleted payload</div>
+          </div>
+          <pre><span class="c-bracket">{</span>
+  <span class="c-key">"event"</span>:     <span class="c-str">"project.deleted"</span>,
+  <span class="c-key">"timestamp"</span>: <span class="c-str">"2025-11-25T16:00:00Z"</span>,
+  <span class="c-key">"data"</span>: <span class="c-bracket">{</span>
+    <span class="c-key">"id"</span>:    <span class="c-num">1</span>,
+    <span class="c-key">"name"</span>:  <span class="c-str">"Black Friday Sale"</span>,
+    <span class="c-key">"token"</span>: <span class="c-str">"black-friday"</span>,
+    <span class="c-key">"spins_count"</span>: <span class="c-num">142</span>
+  <span class="c-bracket">}</span>
+<span class="c-bracket">}</span></pre>
+        </div>
+        <div class="callout callout-warn">
+          <div class="callout-icon">⏱️</div>
+          <div class="callout-body">
+            <strong>Retry policy</strong>
+            Failed webhooks (non-2xx response or timeout) are retried up to 3 times with exponential backoff: 1 min, 5 min, 30 min. After 3 failures the event is marked as failed in the webhook log.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="webhook-security">
+    <div class="section-eyebrow">Webhooks</div>
+    <div class="section-title">Signature verification</div>
+    <div class="section-desc">Every webhook request includes a <code style="font-family:'JetBrains Mono',monospace;color:var(--a2);font-size:13px">X-SpinWheel-Signature</code> header. Always verify this before processing the payload.</div>
+
+    <div class="ep-grid">
+      <div>
+        <div class="code-wrap" style="margin-bottom:16px">
+          <div class="code-header">
+            <div class="code-lang"><span>PHP</span>Verify signature</div>
+            <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+          </div>
+          <pre><span class="c-cmt">// Your webhook secret from Admin → Settings</span>
+$secret  = <span class="c-str">'whsec_your_webhook_secret'</span>;
+$payload = <span class="c-method">file_get_contents</span>(<span class="c-str">'php://input'</span>);
+$sigHdr  = $_SERVER[<span class="c-str">'HTTP_X_SPINWHEEL_SIGNATURE'</span>];
+
+$expected = <span class="c-str">'sha256='</span> .
+  <span class="c-method">hash_hmac</span>(<span class="c-str">'sha256'</span>, $payload, $secret);
+
+<span class="c-key">if</span> (!<span class="c-method">hash_equals</span>($expected, $sigHdr)) {
+  <span class="c-method">http_response_code</span>(<span class="c-num">401</span>);
+  <span class="c-key">exit</span>(<span class="c-str">'Invalid signature'</span>);
+}
+
+$data = <span class="c-method">json_decode</span>($payload, <span class="c-bool">true</span>);
+<span class="c-cmt">// Process $data['event'] and $data['data']</span></pre>
+        </div>
+      </div>
+      <div>
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-lang"><span>JS</span>Node.js / Express</div>
+            <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+          </div>
+          <pre><span class="c-key">const</span> crypto = <span class="c-method">require</span>(<span class="c-str">'crypto'</span>);
+
+app.<span class="c-method">post</span>(<span class="c-str">'/webhook'</span>, (req, res) => {
+  <span class="c-key">const</span> secret    = <span class="c-str">'whsec_your_secret'</span>;
+  <span class="c-key">const</span> payload   = JSON.<span class="c-method">stringify</span>(req.body);
+  <span class="c-key">const</span> signature = req.headers[
+    <span class="c-str">'x-spinwheel-signature'</span>
+  ];
+  <span class="c-key">const</span> expected  = <span class="c-str">'sha256='</span> +
+    crypto.<span class="c-method">createHmac</span>(<span class="c-str">'sha256'</span>, secret)
+          .<span class="c-method">update</span>(payload)
+          .<span class="c-method">digest</span>(<span class="c-str">'hex'</span>);
+
+  <span class="c-key">if</span> (signature !== expected) {
+    <span class="c-key">return</span> res.<span class="c-method">status</span>(<span class="c-num">401</span>).<span class="c-method">send</span>(<span class="c-str">'Unauthorized'</span>);
+  }
+
+  <span class="c-key">const</span> { event, data } = req.body;
+  <span class="c-cmt">// Handle event...</span>
+  res.<span class="c-method">status</span>(<span class="c-num">200</span>).<span class="c-method">send</span>(<span class="c-str">'OK'</span>);
+});</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SUCCESS MESSAGE CUSTOMISATION
+  ══════════════════════════════════════════════════ -->
+  <section class="section" id="success-msg">
+    <div class="breadcrumb">Docs <span>/</span> Success Messages</div>
+    <div class="section-eyebrow">Success Messages</div>
+    <div class="section-title">Customising win messages per prize</div>
+    <div class="section-desc">
+      Every wheel option has its own <code>success_msg</code> field. When a spin completes, the winning prize's message is returned in the API response and displayed in the result popup. You can customise this per-prize from the Admin or via the API.
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-icon">✨</div>
+      <div class="callout-body">
+        <strong>How success messages work</strong>
+        The spin API returns the winner's <code>success_msg</code> in the response. The spin page displays it in the popup modal. If you're using webhooks, the same message is included in the <code>spin.completed</code> payload — letting you trigger personalised emails, SMS, or CRM updates based on exactly what was won.
+      </div>
+    </div>
+
+    <!-- Update success_msg via API -->
+    <div class="endpoint-card">
+      <div class="endpoint-header" onclick="toggleEp(this)">
+        <span class="ep-method m-put">PUT</span>
+        <span class="ep-path">/projects/<em>{token}</em>/options/<em>{option_id}</em></span>
+        <span class="ep-desc">Update prize success message</span>
+        <span class="ep-chevron">▾</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="callout callout-info">
+          <div class="callout-icon">ℹ️</div>
+          <div class="callout-body">
+            <strong>Customise per-winner messages</strong>
+            Use dynamic variables in your success message using placeholders. The API replaces them with actual participant data at spin time.
+          </div>
+        </div>
+
+        <div class="ep-grid">
+          <div>
+            <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:10px;font-family:'JetBrains Mono',monospace">Available Placeholders</div>
+            <table class="params-table" style="margin-bottom:18px">
+              <thead><tr><th>Placeholder</th><th>Replaced With</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">{{name}}</td><td class="param-desc">Participant's name (from email/short field)</td></tr>
+                <tr><td class="param-name">{{email}}</td><td class="param-desc">Participant's email address</td></tr>
+                <tr><td class="param-name">{{prize}}</td><td class="param-desc">Name of the prize won</td></tr>
+                <tr><td class="param-name">{{date}}</td><td class="param-desc">Date of spin (formatted)</td></tr>
+                <tr><td class="param-name">{{project}}</td><td class="param-desc">Project/campaign name</td></tr>
+              </tbody>
+            </table>
+
+            <table class="params-table">
+              <thead><tr><th>Body Field</th><th>Type</th><th></th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td class="param-name">success_msg</td><td class="param-type">string</td><td><span class="param-req req">Required</span></td><td class="param-desc">The message shown in the win popup. Supports emoji and placeholders.</td></tr>
+                <tr><td class="param-name">name</td><td class="param-type">string</td><td><span class="param-req opt">Optional</span></td><td class="param-desc">Prize display name on the wheel</td></tr>
+                <tr><td class="param-name">probability</td><td class="param-type">number</td><td><span class="param-req opt">Optional</span></td><td class="param-desc">Win probability percentage (0–100)</td></tr>
+                <tr><td class="param-name">color</td><td class="param-type">string</td><td><span class="param-req opt">Optional</span></td><td class="param-desc">Hex colour for wheel segment e.g. <code>#6366f1</code></td></tr>
+                <tr><td class="param-name">status</td><td class="param-type">string</td><td><span class="param-req opt">Optional</span></td><td class="param-desc"><code>active</code> or <code>inactive</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="tabs">
+              <button class="tab active" onclick="switchTab(this,'sm-curl')">cURL</button>
+              <button class="tab" onclick="switchTab(this,'sm-examples')">Message Examples</button>
+            </div>
+            <div class="tab-panel active" id="sm-curl">
+              <div class="code-wrap">
+                <div class="code-header">
+                  <div class="code-lang"><span>cURL</span>Update success message</div>
+                  <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+                </div>
+                <pre><span class="c-method">curl</span> -X PUT \
+  <span class="c-url">https://yoursite.com/api/v1/projects/black-friday/options/3</span> \
+  -H <span class="c-str">"Authorization: Bearer swp_live_..."</span> \
+  -H <span class="c-str">"Content-Type: application/json"</span> \
+  -H <span class="c-str">"X-Domain: yourcompany.com"</span> \
+  -d <span class="c-bracket">'</span><span class="c-bracket">{</span>
+    <span class="c-key">"success_msg"</span>: <span class="c-str">"🎉 Congrats {{name}}!
+You won {{prize}}. Check {{email}}
+for your redemption code within 1hr."</span>
+  <span class="c-bracket">}</span><span class="c-bracket">'</span></pre>
+              </div>
+              <div class="code-wrap" style="margin-top:12px">
+                <div class="code-header"><div class="code-lang"><span style="color:#34d399">200</span>Response</div></div>
+                <pre><span class="c-bracket">{</span>
+  <span class="c-key">"success"</span>: <span class="c-bool">true</span>,
+  <span class="c-key">"data"</span>: <span class="c-bracket">{</span>
+    <span class="c-key">"id"</span>:          <span class="c-num">3</span>,
+    <span class="c-key">"name"</span>:        <span class="c-str">"50% Off Voucher"</span>,
+    <span class="c-key">"success_msg"</span>: <span class="c-str">"🎉 Congrats {{name}}!..."</span>,
+    <span class="c-key">"updated_at"</span>:  <span class="c-str">"2025-11-25T14:00:00Z"</span>
+  <span class="c-bracket">}</span>
+<span class="c-bracket">}</span></pre>
+              </div>
+            </div>
+            <div class="tab-panel" id="sm-examples">
+              <div class="code-wrap">
+                <div class="code-header"><div class="code-lang"><span>Examples</span>Message templates</div></div>
+                <pre><span class="c-cmt">// Grand Prize winner</span>
+<span class="c-str">"🏆 WOW {{name}}! You won {{prize}}!
+Our team will call you within 24hrs
+to arrange delivery."</span>
+
+<span class="c-cmt">// Discount voucher</span>
+<span class="c-str">"🎉 {{name}}, your 50% off code is
+BF2025 — expires in 48hrs.
+Check {{email}} for full details."</span>
+
+<span class="c-cmt">// Try Again (no win)</span>
+<span class="c-str">"Better luck next time, {{name}}! 
+Follow us on social for more
+chances to win {{prize}}."</span>
+
+<span class="c-cmt">// Event ticket</span>
+<span class="c-str">"🎫 Your VIP ticket is confirmed!
+Reference: #{{participant_id}}
+Check {{email}} for your e-ticket."</span></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How it flows -->
+    <div class="auth-card" style="margin-top:8px">
+      <div class="auth-card-title">How the success message flows end-to-end</div>
+      <div class="auth-card-desc">Understanding the complete journey from spin to notification:</div>
+      <div style="display:grid;gap:10px;margin-top:12px">
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:9px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(163,230,53,.15);border:1px solid rgba(163,230,53,.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--lime);flex-shrink:0">1</div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:3px">Participant submits form & spins</div><div style="font-size:12px;color:#8899aa">POST /api/spin.php — probability engine selects the winning prize</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:9px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(163,230,53,.15);border:1px solid rgba(163,230,53,.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--lime);flex-shrink:0">2</div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:3px">API returns winner with success_msg</div><div style="font-size:12px;color:#8899aa">Response includes <code>winner.success_msg</code> — the customised per-prize message</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:9px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(163,230,53,.15);border:1px solid rgba(163,230,53,.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--lime);flex-shrink:0">3</div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:3px">Spin page displays the win popup</div><div style="font-size:12px;color:#8899aa">Participant sees the animated result with the customised message immediately</div></div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:9px">
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(109,114,246,.15);border:1px solid rgba(109,114,246,.3);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--a2);flex-shrink:0">4</div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:3px">Webhook fires spin.completed</div><div style="font-size:12px;color:#8899aa">Your endpoint receives the full payload including <code>winner.success_msg</code>, all form answers, and participant ID — trigger emails, CRM updates, or Slack alerts based on the prize won</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       WEBHOOK-TRIGGERED SUCCESS MESSAGES
+  ══════════════════════════════════════════════════ -->
+  <section class="section" id="webhook-trigger">
+    <div class="section-eyebrow">Webhook Automation</div>
+    <div class="section-title">Trigger actions based on spin result</div>
+    <div class="section-desc">
+      Use the <code>spin.completed</code> webhook to trigger different actions based on exactly what prize was won. Send personalised winner emails, update your CRM, issue discount codes, or post Slack alerts — all automatically.
+    </div>
+
+    <div class="ep-grid" style="margin-bottom:24px">
+      <div>
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-lang"><span>PHP</span>Handle different prizes via webhook</div>
+            <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+          </div>
+          <pre><span class="c-cmt">// Your webhook receiver endpoint</span>
+$payload = <span class="c-method">json_decode</span>(
+  <span class="c-method">file_get_contents</span>(<span class="c-str">'php://input'</span>), <span class="c-bool">true</span>
+);
+
+<span class="c-cmt">// Always verify signature first</span>
+<span class="c-method">verifyWebhookSignature</span>($payload);
+
+<span class="c-key">if</span> ($payload[<span class="c-str">'event'</span>] !== <span class="c-str">'spin.completed'</span>) <span class="c-key">exit</span>;
+
+$winner  = $payload[<span class="c-str">'data'</span>][<span class="c-str">'winner'</span>];
+$answers = $payload[<span class="c-str">'data'</span>][<span class="c-str">'answers'</span>];
+
+<span class="c-cmt">// Extract participant details</span>
+$email = <span class="c-method">extractAnswer</span>($answers, <span class="c-str">'email'</span>);
+$name  = <span class="c-method">extractAnswer</span>($answers, <span class="c-str">'Full Name'</span>);
+
+<span class="c-cmt">// Branch logic by prize name</span>
+<span class="c-key">switch</span> ($winner[<span class="c-str">'name'</span>]) {
+
+  <span class="c-key">case</span> <span class="c-str">'Grand Prize iPad'</span>:
+    <span class="c-cmt">// High-value winner — personal follow-up</span>
+    <span class="c-method">sendEmail</span>($email, <span class="c-str">'You won an iPad!'</span>,
+      <span class="c-method">renderTemplate</span>(<span class="c-str">'grand-prize'</span>, [
+        <span class="c-str">'name'</span>  => $name,
+        <span class="c-str">'prize'</span> => $winner[<span class="c-str">'name'</span>],
+      ]));
+    <span class="c-method">notifySlack</span>(<span class="c-str">"🏆 GRAND PRIZE won by $name ($email)"</span>);
+    <span class="c-method">createSalesforceLead</span>($name, $email, <span class="c-str">'grand-prize'</span>);
+    <span class="c-key">break</span>;
+
+  <span class="c-key">case</span> <span class="c-str">'50% Off Voucher'</span>:
+    <span class="c-cmt">// Auto-issue discount code</span>
+    $code = <span class="c-method">generateDiscountCode</span>(<span class="c-str">'BF50'</span>, $email);
+    <span class="c-method">sendEmail</span>($email, <span class="c-str">'Your 50% off code'</span>,
+      <span class="c-method">renderTemplate</span>(<span class="c-str">'voucher'</span>, [
+        <span class="c-str">'name'</span> => $name,
+        <span class="c-str">'code'</span> => $code,
+      ]));
+    <span class="c-key">break</span>;
+
+  <span class="c-key">case</span> <span class="c-str">'Try Again'</span>:
+    <span class="c-cmt">// Consolation — add to nurture sequence</span>
+    <span class="c-method">addToEmailSequence</span>($email, <span class="c-str">'consolation-flow'</span>);
+    <span class="c-key">break</span>;
+}
+
+<span class="c-method">http_response_code</span>(<span class="c-num">200</span>);
+<span class="c-key">echo</span> <span class="c-str">'OK'</span>;</pre>
+        </div>
+      </div>
+      <div>
+        <div class="code-wrap" style="margin-bottom:14px">
+          <div class="code-header">
+            <div class="code-lang"><span>JS</span>Node.js — Send winner email</div>
+            <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+          </div>
+          <pre><span class="c-key">const</span> { event, data } = req.body;
+<span class="c-key">if</span> (event !== <span class="c-str">'spin.completed'</span>) <span class="c-key">return</span>;
+
+<span class="c-key">const</span> { winner, answers, project } = data;
+
+<span class="c-cmt">// Find email from answers</span>
+<span class="c-key">const</span> emailAns = answers.<span class="c-method">find</span>(
+  a => a.type === <span class="c-str">'email'</span>
+);
+<span class="c-key">const</span> email = emailAns?.answer;
+
+<span class="c-cmt">// Personalise message per prize</span>
+<span class="c-key">const</span> msg = winner.success_msg
+  .<span class="c-method">replace</span>(<span class="c-str">'{{prize}}'</span>, winner.name)
+  .<span class="c-method">replace</span>(<span class="c-str">'{{project}}'</span>, project.name);
+
+<span class="c-cmt">// Send via SendGrid / Mailgun / SES</span>
+<span class="c-key">await</span> sendgrid.<span class="c-method">send</span>({
+  to:      email,
+  from:    <span class="c-str">'<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8ae4e5f8effae6f3caf3e5fff8e9e5e7faebe4f3a4e9e5e7">[email&#160;protected]</a>'</span>,
+  subject: <span class="c-str">`🎉 You won: ${winner.name}!`</span>,
+  text:    msg,
+  html:    <span class="c-method">renderWinnerEmail</span>(winner, answers),
+});
+
+<span class="c-cmt">// Also push to HubSpot CRM</span>
+<span class="c-key">await</span> hubspot.contacts.<span class="c-method">create</span>({
+  email,
+  properties: {
+    <span class="c-str">'spin_prize'</span>:    winner.name,
+    <span class="c-str">'spin_campaign'</span>: project.name,
+    <span class="c-str">'spin_date'</span>:     data.spun_at,
+  }
+});</pre>
+        </div>
+
+        <div class="callout callout-warn">
+          <div class="callout-icon">⚡</div>
+          <div class="callout-body">
+            <strong>Respond within 5 seconds</strong>
+            SpinWheel Pro considers a webhook delivered if it receives a <code>2xx</code> response within 5 seconds. Do any heavy processing (emails, CRM calls) asynchronously via a queue — respond <code>200 OK</code> immediately and process in the background.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integration examples -->
+    <div style="font-size:14px;font-weight:600;color:var(--t);margin-bottom:14px">Common integration patterns</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <div style="font-size:18px;margin-bottom:8px">📧</div>
+        <div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:5px">Transactional Email</div>
+        <div style="font-size:12px;color:#8899aa;line-height:1.6">Send personalised winner emails via SendGrid, Mailgun, AWS SES, or Postmark. Include the prize-specific <code>success_msg</code> as the email body.</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <div style="font-size:18px;margin-bottom:8px">☁️</div>
+        <div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:5px">CRM Update</div>
+        <div style="font-size:12px;color:#8899aa;line-height:1.6">Create or update contacts in HubSpot, Salesforce, or Zoho. Tag them with the prize won and campaign name for segmented follow-up campaigns.</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <div style="font-size:18px;margin-bottom:8px">💬</div>
+        <div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:5px">Slack Alerts</div>
+        <div style="font-size:12px;color:#8899aa;line-height:1.6">Post to a <code>#winners</code> channel when high-value prizes are won. Include participant name, email, and prize for instant team follow-up.</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <div style="font-size:18px;margin-bottom:8px">🎟️</div>
+        <div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:5px">Discount Code Issuance</div>
+        <div style="font-size:12px;color:#8899aa;line-height:1.6">Auto-generate unique voucher codes when a discount prize is won. Push to Shopify, WooCommerce, or your e-commerce platform via their API.</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <div style="font-size:18px;margin-bottom:8px">📱</div>
+        <div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:5px">SMS Notification</div>
+        <div style="font-size:12px;color:#8899aa;line-height:1.6">Send winner SMS via Twilio or MessageBird when a phone number is collected in the form. Use prize-specific message templates.</div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px">
+        <div style="font-size:18px;margin-bottom:8px">⚡</div>
+        <div style="font-size:13px;font-weight:600;color:var(--t);margin-bottom:5px">Zapier / Make</div>
+        <div style="font-size:12px;color:#8899aa;line-height:1.6">Connect to 5,000+ apps without writing code. Use the webhook URL in Zapier's "Catch Hook" trigger or Make's webhook module.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       SDKs & POSTMAN
+  ══════════════════════════════════════════════════ -->
+  <section class="section" id="sdks">
+    <div class="breadcrumb">Docs <span>/</span> SDK & Tools</div>
+    <div class="section-eyebrow">SDK & Tools</div>
+    <div class="section-title">Libraries & integrations</div>
+    <div class="section-desc">SpinWheel Pro's REST API works with any HTTP client. These libraries and platforms are recommended.</div>
+
+    <div class="sdk-grid">
+      <div class="sdk-card">
+        <div class="sdk-icon">🐘</div>
+        <div class="sdk-name">PHP</div>
+        <div class="sdk-desc">Native cURL or Guzzle HTTP client</div>
+      </div>
+      <div class="sdk-card">
+        <div class="sdk-icon">🟨</div>
+        <div class="sdk-name">JavaScript</div>
+        <div class="sdk-desc">Fetch API, Axios, or node-fetch</div>
+      </div>
+      <div class="sdk-card">
+        <div class="sdk-icon">🐍</div>
+        <div class="sdk-name">Python</div>
+        <div class="sdk-desc">requests or httpx library</div>
+      </div>
+      <div class="sdk-card">
+        <div class="sdk-icon">💎</div>
+        <div class="sdk-name">Ruby</div>
+        <div class="sdk-desc">Net::HTTP or Faraday gem</div>
+      </div>
+      <div class="sdk-card">
+        <div class="sdk-icon">⚡</div>
+        <div class="sdk-name">Zapier</div>
+        <div class="sdk-desc">Use webhooks to connect 5,000+ apps</div>
+      </div>
+      <div class="sdk-card">
+        <div class="sdk-icon">🛍️</div>
+        <div class="sdk-name">Shopify</div>
+        <div class="sdk-desc">Embed via Liquid + Webhooks (V3)</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="postman">
+    <div class="section-eyebrow">SDK & Tools</div>
+    <div class="section-title">Postman collection</div>
+    <div class="section-desc">Import the SpinWheel Pro collection into Postman to test every endpoint instantly. Pre-configured with environment variables for easy setup.</div>
+
+    <div class="ep-grid">
+      <div>
+        <div class="auth-card">
+          <div class="auth-card-title">Quick Setup</div>
+          <div class="auth-card-desc">
+            1. Click <strong>Run in Postman</strong> in the header above<br>
+            2. Fork the collection to your workspace<br>
+            3. Set these environment variables:<br>
+          </div>
+          <table class="params-table" style="margin-top:12px">
+            <thead><tr><th>Variable</th><th>Value</th></tr></thead>
+            <tbody>
+              <tr><td class="param-name">BASE_URL</td><td class="param-desc">https://yoursite.com</td></tr>
+              <tr><td class="param-name">API_KEY</td><td class="param-desc">swp_live_your_key</td></tr>
+              <tr><td class="param-name">DOMAIN</td><td class="param-desc">yourcompany.com</td></tr>
+              <tr><td class="param-name">PROJECT_TOKEN</td><td class="param-desc">your-project-slug</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="code-wrap">
+          <div class="code-header">
+            <div class="code-lang"><span>JSON</span>Postman Environment</div>
+            <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+          </div>
+          <pre><span class="c-bracket">{</span>
+  <span class="c-key">"name"</span>: <span class="c-str">"SpinWheel Pro"</span>,
+  <span class="c-key">"values"</span>: <span class="c-bracket">[</span>
+    <span class="c-bracket">{</span>
+      <span class="c-key">"key"</span>: <span class="c-str">"BASE_URL"</span>,
+      <span class="c-key">"value"</span>: <span class="c-str">"https://yoursite.com"</span>,
+      <span class="c-key">"enabled"</span>: <span class="c-bool">true</span>
+    <span class="c-bracket">}</span>,
+    <span class="c-bracket">{</span>
+      <span class="c-key">"key"</span>: <span class="c-str">"API_KEY"</span>,
+      <span class="c-key">"value"</span>: <span class="c-str">"swp_live_your_key"</span>,
+      <span class="c-key">"enabled"</span>: <span class="c-bool">true</span>
+    <span class="c-bracket">}</span>,
+    <span class="c-bracket">{</span>
+      <span class="c-key">"key"</span>: <span class="c-str">"PROJECT_TOKEN"</span>,
+      <span class="c-key">"value"</span>: <span class="c-str">"black-friday"</span>,
+      <span class="c-key">"enabled"</span>: <span class="c-bool">true</span>
+    <span class="c-bracket">}</span>
+  <span class="c-bracket">]</span>
+<span class="c-bracket">}</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Postman Collection JSON download -->
+    <div style="margin-top:24px">
+      <div class="code-wrap">
+        <div class="code-header">
+          <div class="code-lang"><span>JSON</span>Postman Collection v2.1</div>
+          <button class="btn-copy" onclick="copyCode(this)">📋 Copy</button>
+          <button class="btn-copy" onclick="downloadCollection()" style="margin-left:6px;background:rgba(255,108,55,.12);color:#FF6C37;border-color:rgba(255,108,55,.3)">⬇ Download</button>
+        </div>
+        <pre id="postmanCollection"><span class="c-bracket">{</span>
+  <span class="c-key">"info"</span>: <span class="c-bracket">{</span>
+    <span class="c-key">"name"</span>:   <span class="c-str">"SpinWheel Pro API"</span>,
+    <span class="c-key">"schema"</span>: <span class="c-str">"https://schema.getpostman.com/json/
+             collection/v2.1.0/collection.json"</span>
+  <span class="c-bracket">}</span>,
+  <span class="c-key">"variable"</span>: <span class="c-bracket">[</span>
+    <span class="c-bracket">{</span> <span class="c-key">"key"</span>: <span class="c-str">"BASE_URL"</span>,       <span class="c-key">"value"</span>: <span class="c-str">"https://yoursite.com"</span> <span class="c-bracket">}</span>,
+    <span class="c-bracket">{</span> <span class="c-key">"key"</span>: <span class="c-str">"API_KEY"</span>,        <span class="c-key">"value"</span>: <span class="c-str">"swp_live_..."</span> <span class="c-bracket">}</span>,
+    <span class="c-bracket">{</span> <span class="c-key">"key"</span>: <span class="c-str">"PROJECT_TOKEN"</span>,  <span class="c-key">"value"</span>: <span class="c-str">"black-friday"</span> <span class="c-bracket">}</span>
+  <span class="c-bracket">]</span>,
+  <span class="c-key">"item"</span>: <span class="c-bracket">[</span>
+    <span class="c-bracket">{</span>
+      <span class="c-key">"name"</span>: <span class="c-str">"Submit Spin"</span>,
+      <span class="c-key">"request"</span>: <span class="c-bracket">{</span>
+        <span class="c-key">"method"</span>: <span class="c-str">"POST"</span>,
+        <span class="c-key">"url"</span>: <span class="c-str">"{{BASE_URL}}/api/spin.php"</span>,
+        <span class="c-key">"body"</span>: <span class="c-bracket">{</span>
+          <span class="c-key">"mode"</span>: <span class="c-str">"formdata"</span>,
+          <span class="c-key">"formdata"</span>: <span class="c-bracket">[</span>
+            <span class="c-bracket">{</span> <span class="c-key">"key"</span>: <span class="c-str">"csrf_token"</span>,    <span class="c-key">"value"</span>: <span class="c-str">"{{CSRF_TOKEN}}"</span> <span class="c-bracket">}</span>,
+            <span class="c-bracket">{</span> <span class="c-key">"key"</span>: <span class="c-str">"project_token"</span>, <span class="c-key">"value"</span>: <span class="c-str">"{{PROJECT_TOKEN}}"</span> <span class="c-bracket">}</span>,
+            <span class="c-bracket">{</span> <span class="c-key">"key"</span>: <span class="c-str">"q_1"</span>,           <span class="c-key">"value"</span>: <span class="c-str">"Jane Smith"</span> <span class="c-bracket">}</span>,
+            <span class="c-bracket">{</span> <span class="c-key">"key"</span>: <span class="c-str">"q_2"</span>,           <span class="c-key">"value"</span>: <span class="c-str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3a505b545f7a5b59575f14595557">[email&#160;protected]</a>"</span> <span class="c-bracket">}</span>
+          <span class="c-bracket">]</span>
+        <span class="c-bracket">}</span>
+      <span class="c-bracket">}</span>
+    <span class="c-bracket">}</span>,
+    <span class="c-bracket">{</span>
+      <span class="c-key">"name"</span>: <span class="c-str">"Get Participant"</span>,
+      <span class="c-key">"request"</span>: <span class="c-bracket">{</span>
+        <span class="c-key">"method"</span>: <span class="c-str">"GET"</span>,
+        <span class="c-key">"url"</span>: <span class="c-str">"{{BASE_URL}}/api/v1/participant.php?id=1"</span>,
+        <span class="c-key">"header"</span>: <span class="c-bracket">[</span>
+          <span class="c-bracket">{</span> <span class="c-key">"key"</span>: <span class="c-str">"Authorization"</span>, <span class="c-key">"value"</span>: <span class="c-str">"Bearer {{API_KEY}}"</span> <span class="c-bracket">}</span>,
+          <span class="c-bracket">{</span> <span class="c-key">"key"</span>: <span class="c-str">"X-Domain"</span>,       <span class="c-key">"value"</span>: <span class="c-str">"{{DOMAIN}}"</span> <span class="c-bracket">}</span>
+        <span class="c-bracket">]</span>
+      <span class="c-bracket">}</span>
+    <span class="c-bracket">}</span>,
+    <span class="c-bracket">{</span>
+      <span class="c-key">"name"</span>: <span class="c-str">"Project Stats"</span>,
+      <span class="c-key">"request"</span>: <span class="c-bracket">{</span>
+        <span class="c-key">"method"</span>: <span class="c-str">"GET"</span>,
+        <span class="c-key">"url"</span>: <span class="c-str">"{{BASE_URL}}/api/v1/project_stats.php?project_id=1"</span>
+      <span class="c-bracket">}</span>
+    <span class="c-bracket">}</span>
+  <span class="c-bracket">]</span>
+<span class="c-bracket">}</span></pre>
+      </div>
+    </div>
+
+    <div style="height:80px"></div>
+  </section>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════ -->
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── SIDEBAR ACTIVE STATE ──────────────────────────────
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+  event.target.closest('.sb-link').classList.add('active');
+}
+
+// ── ENDPOINT TOGGLE ───────────────────────────────────
+function toggleEp(header) {
+  const body    = header.nextElementSibling;
+  const chevron = header.querySelector('.ep-chevron');
+  const isOpen  = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+}
+
+// ── TABS ──────────────────────────────────────────────
+function switchTab(btn, panelId) {
+  const container = btn.closest('.endpoint-body') || btn.closest('.section');
+  container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  container.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById(panelId);
+  if (panel) panel.classList.add('active');
+}
+
+// ── RESPONSE SWITCHER ─────────────────────────────────
+function switchResp(badge, targetId) {
+  const container = badge.closest('.endpoint-body');
+  container.querySelectorAll('.resp-badge').forEach(b => b.classList.remove('active'));
+  badge.classList.add('active');
+  const allResp = container.querySelectorAll('[id^="resp-"]');
+  allResp.forEach(r => r.style.display = 'none');
+  const target = document.getElementById(targetId);
+  if (target) target.style.display = 'block';
+}
+
+// ── COPY CODE ─────────────────────────────────────────
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrap').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard?.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyBase() {
+  const val = document.getElementById('baseUrlVal').textContent;
+  navigator.clipboard?.writeText(val).then(() => {
+    const btn = event.target;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = '📋 Copy', 2000);
+  });
+}
+
+// ── OPEN POSTMAN ──────────────────────────────────────
+function openPostman() {
+  const collection = {
+    info: { name: 'SpinWheel Pro API', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json' },
+    variable: [
+      { key: 'BASE_URL', value: 'https://yoursite.com' },
+      { key: 'API_KEY',  value: 'swp_live_your_key_here' },
+      { key: 'PROJECT_TOKEN', value: 'test-it' }
+    ],
+    item: [
+      { name: 'Submit Spin', request: { method: 'POST', url: '{{BASE_URL}}/api/spin.php', body: { mode: 'formdata', formdata: [{ key:'csrf_token', value:'{{CSRF_TOKEN}}' },{ key:'project_token', value:'{{PROJECT_TOKEN}}' },{ key:'q_1', value:'Jane Smith' },{ key:'q_2', value:'jane@acmecorp.com' }] } } },
+      { name: 'Get Participant', request: { method: 'GET', url: '{{BASE_URL}}/api/v1/participant.php?id=1', header: [{ key:'Authorization', value:'Bearer {{API_KEY}}' }] } },
+      { name: 'Project Stats', request: { method: 'GET', url: '{{BASE_URL}}/api/v1/project_stats.php?project_id=1' } }
+    ]
+  };
+  const encoded = encodeURIComponent(JSON.stringify(collection));
+  window.open(`https://app.getpostman.com/run-collection/${encoded}`, '_blank');
+}
+
+// ── DOWNLOAD COLLECTION ───────────────────────────────
+function downloadCollection() {
+  const collection = {
+    info: { name: 'SpinWheel Pro API v2', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json', description: 'SpinWheel Pro REST API collection. Set environment variables before running.' },
+    variable: [
+      { key:'BASE_URL',       value:'https://yoursite.com',    description:'Your SpinWheel Pro domain' },
+      { key:'API_KEY',        value:'swp_live_your_key_here',  description:'From Admin → Settings → Tenant Identity' },
+      { key:'DOMAIN',         value:'yourcompany.com',         description:'Your registered tenant domain' },
+      { key:'PROJECT_TOKEN',  value:'test-it',                 description:'Your project URL slug' },
+      { key:'CSRF_TOKEN',     value:'',                        description:'Obtained by loading the spin page first' }
+    ],
+    item: [
+      {
+        name: '🎡 Spin API',
+        item: [
+          {
+            name: 'POST Submit Spin',
+            request: {
+              method: 'POST', url: '{{BASE_URL}}/api/spin.php',
+              body: { mode: 'formdata', formdata: [
+                { key:'csrf_token',    value:'{{CSRF_TOKEN}}', description:'Session CSRF token' },
+                { key:'project_token', value:'{{PROJECT_TOKEN}}' },
+                { key:'q_1',           value:'Jane Smith', description:'Full Name answer' },
+                { key:'q_2',           value:'jane@acmecorp.com', description:'Email answer' },
+                { key:'q_3',           value:'Acme Corp', description:'Company answer' }
+              ]}
+            }
+          }
+        ]
+      },
+      {
+        name: '📊 Projects',
+        item: [
+          { name: 'GET List Projects',  request: { method:'GET', url:'{{BASE_URL}}/api/v1/projects', header:[{key:'Authorization',value:'Bearer {{API_KEY}}'},{key:'X-Domain',value:'{{DOMAIN}}'}] } },
+          { name: 'GET Project by Token', request: { method:'GET', url:'{{BASE_URL}}/api/v1/projects/{{PROJECT_TOKEN}}', header:[{key:'Authorization',value:'Bearer {{API_KEY}}'}] } },
+          { name: 'GET Project Stats',  request: { method:'GET', url:'{{BASE_URL}}/api/v1/project_stats.php?project_id=1' } }
+        ]
+      },
+      {
+        name: '👥 Participants',
+        item: [
+          { name: 'GET List Participants', request: { method:'GET', url:'{{BASE_URL}}/api/v1/projects/{{PROJECT_TOKEN}}/participants?limit=25&page=1', header:[{key:'Authorization',value:'Bearer {{API_KEY}}'},{key:'X-Domain',value:'{{DOMAIN}}'}] } },
+          { name: 'GET Participant by ID', request: { method:'GET', url:'{{BASE_URL}}/api/v1/participant.php?id=1', header:[{key:'Authorization',value:'Bearer {{API_KEY}}'}] } },
+          { name: 'GET Export CSV',  request: { method:'GET', url:'{{BASE_URL}}/admin/export.php?project_id=1&format=csv&csrf_token={{CSRF_TOKEN}}' } },
+          { name: 'GET Export JSON', request: { method:'GET', url:'{{BASE_URL}}/admin/export.php?project_id=1&format=json&csrf_token={{CSRF_TOKEN}}' } }
+        ]
+      },
+      {
+        name: '🎰 Wheel Options',
+        item: [
+          { name: 'GET List Wheel Options', request: { method:'GET', url:'{{BASE_URL}}/api/v1/projects/{{PROJECT_TOKEN}}/options', header:[{key:'Authorization',value:'Bearer {{API_KEY}}'}] } }
+        ]
+      }
+    ]
+  };
+
+  const blob = new Blob([JSON.stringify(collection, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'spinwheel-pro-api.postman_collection.json';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ── TRY IT ────────────────────────────────────────────
+async function trySpin() {
+  const baseUrl = document.getElementById('ti-baseurl').value.trim().replace(/\/$/, '');
+  const token   = document.getElementById('ti-token').value.trim();
+  const name    = document.getElementById('ti-name').value.trim();
+  const email   = document.getElementById('ti-email').value.trim();
+  const resp    = document.getElementById('ti-resp');
+
+  resp.className = 'try-response show';
+  resp.style.color = 'var(--t3)';
+  resp.textContent = '⏳ Sending request…';
+
+  try {
+    // Step 1: Get CSRF token
+    resp.textContent = '⏳ Step 1/2: Loading spin page to get CSRF token…';
+    const pageRes = await fetch(`${baseUrl}/spin/index.php?p=${encodeURIComponent(token)}`);
+    const html    = await pageRes.text();
+    const match   = html.match(/name="csrf_token"\s+value="([^"]+)"/);
+    if (!match) {
+      resp.style.color = '#fca5a5';
+      resp.textContent = '✗ Could not get CSRF token from spin page.\n\nMake sure:\n• Base URL is correct\n• Project token exists and is active\n• /spin/index.php?p=' + token + ' loads correctly';
+      return;
+    }
+    const csrf = match[1];
+
+    // Step 2: Submit spin
+    resp.textContent = '⏳ Step 2/2: Submitting spin…';
+    const fd = new FormData();
+    fd.append('csrf_token',    csrf);
+    fd.append('project_token', token);
+    fd.append('q_1', name);
+    fd.append('q_2', email);
+
+    const spinRes  = await fetch(`${baseUrl}/api/spin.php`, { method: 'POST', body: fd });
+    const spinData = await spinRes.json();
+
+    resp.style.color = spinData.success ? '#34d399' : '#fca5a5';
+    resp.textContent = JSON.stringify(spinData, null, 2);
+  } catch (e) {
+    resp.style.color = '#fca5a5';
+    resp.textContent = '✗ Request failed: ' + e.message + '\n\nNote: CORS may block browser-based requests to a different domain. Use Postman or server-side code for cross-origin API calls.';
+  }
+}
+
+// ── KEYBOARD SEARCH ───────────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    // Simple scroll-to-section prompt
+    const section = prompt('Search: type a section name (auth, spin, participants, webhooks, postman)');
+    if (!section) return;
+    const map = { auth:'auth', spin:'spin-submit', participants:'part-list', webhooks:'webhooks', postman:'postman', projects:'proj-list', errors:'errors', success:'success-msg', 'success message':'success-msg', 'webhook trigger':'webhook-trigger', sdks:'sdks' };
+    const id  = map[section.toLowerCase()];
+    if (id) document.getElementById(id)?.scrollIntoView({ behavior:'smooth' });
+  }
+});
+
+// ── SCROLL SPY ────────────────────────────────────────
+const sections = ['intro','auth','baseurl','ratelimits','errors','spin-submit','proj-list','proj-get','proj-stats','part-list','part-get','part-export','wheel-list','webhooks','webhook-events','webhook-payload','webhook-security','success-msg','webhook-trigger','sdks','postman'];
+const links    = document.querySelectorAll('.sb-link');
+
+window.addEventListener('scroll', () => {
+  let current = 'intro';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 100) current = id;
+  });
+  links.forEach(l =

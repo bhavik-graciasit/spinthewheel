@@ -1,0 +1,6 @@
+Options -Indexes
+# Allow PATH_INFO so /spin/TOKEN works
+AcceptPathInfo On
+<FilesMatch "\.php$">
+    # PHP files are allowed here
+</FilesMatch>

@@ -1,0 +1,4 @@
+<?php require_once __DIR__ . '/../includes/config.php'; http_response_code(404); ?>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Not Found</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:#04060c;color:#e2e8f0;font-family:system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}h1{font-size:42px;color:#6366f1;margin-bottom:10px}p{color:#64748b;margin-bottom:22px}a{display:inline-block;padding:10px 26px;background:#6366f1;color:#fff;border-radius:9px;font-weight:600;text-decoration:none}</style>
+</head><body><div><div style="font-size:60px;margin-bottom:16px">🎡</div><h1>404</h1><p>This campaign link is invalid or has ended.<br>Please contact the organiser for a valid link.</p><a href="<?= APP_URL ?>">Go Home</a></div></body></html>
